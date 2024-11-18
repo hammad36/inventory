@@ -18,7 +18,7 @@
 
                     <!-- Desktop Navigation -->
                     <div class="hidden sm:flex sm:ml-6 space-x-4 ml-10">
-                        <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="/index" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
                         <div class="relative">
                             <button id="category-button"
                                 class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
@@ -78,7 +78,7 @@
                     <button id="user-menu-button" class="flex bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                         onclick="toggleDropdown('user-menu')">
                         <span class="sr-only">Open user menu</span>
-                        <img class="h-10 w-10 rounded-full" src="images/avatar.jpg" alt="User avatar">
+                        <img class="h-10 w-10 rounded-full" src="images/avatar32.jpg" alt="User avatar">
                     </button>
                     <div id="user-menu"
                         class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none">

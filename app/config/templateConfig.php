@@ -3,12 +3,12 @@
 return [
 
     'template' => [
-        'templateHeaderStart(1)'            =>     TEMPLATE_PATH . 'templateHeaderStart(1).php',
-        'TemplateHeaderEnd(2)'              =>     TEMPLATE_PATH . 'TemplateHeaderEnd(2).php',
-        'NavBar(3)'                         =>     TEMPLATE_PATH . 'NavBar(3).php',
+        'templateHeaderStart'            =>     TEMPLATE_PATH . 'templateHeaderStart.php',
+        'templateHeaderEnd'              =>     TEMPLATE_PATH . 'templateHeaderEnd.php',
+        'navbar'                         =>     TEMPLATE_PATH . 'navbar.php',
         ':view'                             =>      ':action_view',
-        'Footer(4)'                         =>     TEMPLATE_PATH . 'Footer(4).php',
-        'TemplateEnd(5)'                    =>     TEMPLATE_PATH . 'TemplateEnd(5).php'
+        'footer'                         =>     TEMPLATE_PATH . 'footer.php',
+        'templateEnd'                    =>     TEMPLATE_PATH . 'templateEnd.php'
     ],
 
     'header_resources' => [
