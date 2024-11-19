@@ -51,4 +51,20 @@ class productPhotosModel extends abstractModel
     {
         return $this->uploaded_at;
     }
+
+    public static function getByCategoryId($categoryId)
+    {
+        return self::executeWithConnection(function ($connection) use ($categoryId) {
+            $sql = 'SELECT p.product_id, p.name, p.description, p.unit_price, pp.photo_url
+                    FROM products p
+                    LEFT JOIN product_photos pp ON pp.product_id = p.product_id
+                    WHERE p.category_id = :category_id';
+
+            $stmt = $connection->prepare($sql);
+            $stmt->bindValue(':category_id', $categoryId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        });
+    }
 }

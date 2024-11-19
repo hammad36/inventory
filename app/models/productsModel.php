@@ -2,6 +2,7 @@
 
 namespace inventory\models;
 
+use inventory\lib\database\databaseHandler;
 use inventory\lib\inputFilter;
 
 class productsModel extends abstractModel
@@ -63,5 +64,47 @@ class productsModel extends abstractModel
     public function setUpdatedAt($date)
     {
         $this->updated_at = $this->filterDate($date);
+    }
+
+
+    public static function getByPK($categoryId)
+    {
+        $db = databaseHandler::factory();
+
+        $query = 'SELECT * FROM ' . self::$tableName . ' WHERE category_id = :category_id';
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':category_id', $categoryId, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Ensure we return an array of product objects
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, __CLASS__);
+    }
+
+    // Getter for product_id
+    public function getProductId()
+    {
+        return $this->product_id;
+    }
+
+    // Add getters for other properties if needed
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function getPhotoUrl()
+    {
+        // Assuming the photo URL is part of the product schema
+        return $this->photo_url ?? 'default.jpg'; // Add a default if not set
     }
 }

@@ -14,20 +14,23 @@
 
         <!-- Categories Grid -->
         <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php if (!empty($categories)): ?>
-                <?php foreach ($categories as $category): ?>
-                    <a href="/categories/<?= strtolower(htmlspecialchars($category->getName())) ?>"
+            <?php
+            if (!empty($categories)) {
+                foreach ($categories as $category) {
+                    echo '
+                    <a href="/categories/category/' . $category->getCategoryId() . '" 
                         class="block rounded-2xl border border-gray-100 shadow-lg bg-white p-6 hover:scale-105 hover:bg-gray-100 transition-transform duration-300">
                         <img class="rounded-lg mb-4 w-full h-40 object-cover"
-                            src="<?= htmlspecialchars($category->getPhotoUrl()) ?>"
-                            alt="<?= htmlspecialchars($category->getName()) ?>">
-                        <h3 class="text-lg font-semibold text-gray-800"><?= htmlspecialchars($category->getName()) ?></h3>
-                        <p class="text-sm text-gray-600"><?= htmlspecialchars($category->getDescription() ?? 'No description available.') ?></p>
-                    </a>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="col-span-3 text-center text-gray-500">No categories found.</p>
-            <?php endif; ?>
+                            src="' . htmlspecialchars($category->getPhotoUrl()) . '" 
+                            alt="' . htmlspecialchars($category->getName()) . '">
+                        <h3 class="text-lg font-semibold text-gray-800">' . htmlspecialchars($category->getName()) . '</h3>
+                        <p class="text-sm text-gray-600">' . htmlspecialchars($category->getDescription()) . '</p>
+                    </a>';
+                }
+            } else {
+                echo '<p class="col-span-3 text-center text-gray-500">No categories found.</p>';
+            }
+            ?>
         </div>
     </div>
 </section>

@@ -56,4 +56,9 @@ class categoriesModel extends abstractModel
     {
         return $this->photo_url;
     }
+
+    public function getCategoryId(): int
+    {
+        return $this->category_id;
+    }
 }

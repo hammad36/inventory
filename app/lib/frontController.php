@@ -30,6 +30,10 @@ class frontController
         if (isset($url[2]) && $url[2] != '') {
             $explodedParams = explode('/', $url[2]);
             $this->_params = $explodedParams;
+            // Handle specific case for category action
+            if ($this->_controller == 'categories' && $this->_action == 'category' && isset($this->_params[0])) {
+                $this->_params = [$this->_params[0]]; // Assign categoryId as a single param
+            }
         }
     }
 
@@ -50,6 +54,14 @@ class frontController
         $controller->setAction($this->_action);
         $controller->setParams($this->_params);
         $controller->setTemplate($this->_template);
-        $controller->$actionName();
+
+        // Pass the parameters to the controller's action
+        if (count($this->_params) > 0) {
+            // If there are parameters (like category ID), pass them as arguments
+            call_user_func_array([$controller, $actionName], $this->_params);
+        } else {
+            // Otherwise, just call the action without parameters
+            $controller->$actionName();
+        }
     }
 }
