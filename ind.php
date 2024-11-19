@@ -111,7 +111,7 @@
                     <button id="user-menu-button" class="flex bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                         onclick="toggleDropdown('user-menu')">
                         <span class="sr-only">Open user menu</span>
-                        <img class="h-10 w-10 rounded-full" src="images/avatar.jpg" alt="User avatar">
+                        <img class="h-10 w-10 rounded-full" src="images/avatar322.jpg" alt="User avatar">
                     </button>
                     <div id="user-menu"
                         class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none">

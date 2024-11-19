@@ -18,20 +18,8 @@
 
                     <!-- Desktop Navigation -->
                     <div class="hidden sm:flex sm:ml-6 space-x-4 ml-10">
-                        <a href="/index" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <div class="relative">
-                            <button id="category-button"
-                                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
-                                onclick="toggleDropdown('category-dropdown')">Categories</button>
-                            <div id="category-dropdown"
-                                class="hidden absolute left-0 mt-2 w-40 bg-white rounded-md shadow-lg ring-1 ring-black/5 z-10">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Clothes</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Electronics</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Books</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Perfumes</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Appliances</a>
-                            </div>
-                        </div>
+                        <a href="/index" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium ">Home</a>
+                        <a href="/categories" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Categories</a>
                         <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Stock Adjustments</a>
                         <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Reports</a>
                         <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
@@ -78,10 +66,10 @@
                     <button id="user-menu-button" class="flex bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                         onclick="toggleDropdown('user-menu')">
                         <span class="sr-only">Open user menu</span>
-                        <img class="h-10 w-10 rounded-full" src="images/avatar32.jpg" alt="User avatar">
+                        <img class="h-10 w-10 rounded-full" src="images/avatar322.jpg" alt="User avatar">
                     </button>
                     <div id="user-menu"
-                        class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none">
+                        class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
@@ -93,22 +81,10 @@
         <!-- Add this inside the nav element -->
         <div id="mobile-menu" class="hidden sm:hidden">
             <div class="space-y-1 px-2 pt-2 pb-3">
-                <a href="#" class="block bg-gray-900 text-white px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <div class="px-2">
-                    <button class="w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium focus:outline-none"
-                        onclick="toggleDropdown('mobile-category-dropdown')">
-                        Categories
-                    </button>
-                    <div id="mobile-category-dropdown" class="hidden space-y-1 bg-gray-700 rounded-md px-2 py-3">
-                        <a href="#" class="block text-gray-300 hover:bg-gray-600 hover:text-white px-3 py-2 rounded-md text-base font-medium">Clothes</a>
-                        <a href="#" class="block text-gray-300 hover:bg-gray-600 hover:text-white px-3 py-2 rounded-md text-base font-medium">Electronics</a>
-                        <a href="#" class="block text-gray-300 hover:bg-gray-600 hover:text-white px-3 py-2 rounded-md text-base font-medium">Books</a>
-                        <a href="#" class="block text-gray-300 hover:bg-gray-600 hover:text-white px-3 py-2 rounded-md text-base font-medium">Perfumes</a>
-                        <a href="#" class="block text-gray-300 hover:bg-gray-600 hover:text-white px-3 py-2 rounded-md text-base font-medium">Appliances</a>
-                    </div> <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Stock Adjustments</a>
-                    <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Reports</a>
-                    <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Settings</a>
-                </div>
+                <a href="/index" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="/categories" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Categories</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Reports</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Settings</a>
             </div>
         </div>
 

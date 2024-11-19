@@ -5,8 +5,9 @@ namespace inventory\controllers;
 use inventory\controllers\abstractController;
 use inventory\lib\InputFilter;
 use inventory\lib\alertHandler;
+use inventory\models\categoriesModel;
 
-class clothesController extends abstractController
+class categoriesController extends abstractController
 {
     use InputFilter;
 
@@ -19,6 +20,8 @@ class clothesController extends abstractController
 
     public function defaultAction()
     {
+        $this->_data['categories'] = categoriesModel::getAll();
+
         $this->_view();
     }
 }
