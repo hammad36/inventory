@@ -55,10 +55,16 @@ class productPhotosModel extends abstractModel
     public static function getByCategoryId($categoryId)
     {
         return self::executeWithConnection(function ($connection) use ($categoryId) {
-            $sql = 'SELECT p.product_id, p.name, p.description, p.unit_price, pp.photo_url
+            $sql = 'SELECT 
+                        p.product_id, 
+                        p.name, 
+                        p.description, 
+                        p.unit_price, 
+                        GROUP_CONCAT(pp.photo_url) AS photo_urls
                     FROM products p
                     LEFT JOIN product_photos pp ON pp.product_id = p.product_id
-                    WHERE p.category_id = :category_id';
+                    WHERE p.category_id = :category_id
+                    GROUP BY p.product_id';
 
             $stmt = $connection->prepare($sql);
             $stmt->bindValue(':category_id', $categoryId, \PDO::PARAM_INT);
