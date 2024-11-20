@@ -13,7 +13,8 @@
 
                 <!-- Logo -->
                 <div class="flex flex-1 items-center justify-center sm:justify-start">
-                    <img class="h-10 w-auto" src="images/logo.png" alt="Company Logo">
+                    <!-- <img class="h-10 w-auto" src="images/logo.png" alt="Company Logo"> -->
+                    <img class="h-10 w-auto" src="../../images/logo.png" alt="Company Logo">
                     <span class="text-white font-semibold text-lg ml-2">InvenHammad</span>
 
                     <!-- Desktop Navigation -->
@@ -22,7 +23,7 @@
                         <a href="/categories" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Categories</a>
                         <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Stock Adjustments</a>
                         <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Reports</a>
-                        <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                        <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About Us</a>
                     </div>
                 </div>
 
@@ -66,7 +67,8 @@
                     <button id="user-menu-button" class="flex bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                         onclick="toggleDropdown('user-menu')">
                         <span class="sr-only">Open user menu</span>
-                        <img class="h-10 w-10 rounded-full" src="images/avatar322.jpg" alt="User avatar">
+                        <!-- <img class="h-10 w-10 rounded-full" src="images/avatar322.jpg" alt="User avatar"> -->
+                        <img class="h-10 w-10 rounded-full" src="../../images/avatar322.jpg" alt="User avatar">
                     </button>
                     <div id="user-menu"
                         class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
@@ -84,7 +86,7 @@
                 <a href="/index" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="/categories" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Categories</a>
                 <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Reports</a>
-                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Settings</a>
+                <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">About Us</a>
             </div>
         </div>
 

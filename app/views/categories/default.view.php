@@ -1,8 +1,21 @@
-<section class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-20 sm:pb-16 sm:pt-32 lg:pb-24 xl:pb-32 xl:pt-40">
-    <!-- Background -->
+<section class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent
+    pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
 
+    <!-- Settings Icon -->
+    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
+        <!-- Manage Products Button -->
+        <a href="/categories/manageCategories"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            Manage Categories
+        </a>
+
+
+
+    </div>
+
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
+
         <div class="text-center">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
                 Browse Categories

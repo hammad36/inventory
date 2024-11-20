@@ -59,7 +59,8 @@ class productPhotosModel extends abstractModel
                         p.product_id, 
                         p.name, 
                         p.description, 
-                        p.unit_price, 
+                        p.unit_price,
+                        p.quantity,
                         GROUP_CONCAT(pp.photo_url) AS photo_urls
                     FROM products p
                     LEFT JOIN product_photos pp ON pp.product_id = p.product_id

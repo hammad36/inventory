@@ -1,5 +1,24 @@
-<section class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-20 sm:pb-16 sm:pt-32 lg:pb-24 xl:pb-32 xl:pt-40">
+<section class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
+
+    <div class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30 flex space-x-4">
+        <!-- Back Button -->
+        <a href="/categories" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            <!-- Back Icon -->
+            <svg class="w-5 h-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+        </a>
+    </div>
+
+    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
+        <!-- Manage Products Button -->
+        <a href="/categories/category/'  <?php $category->getCategoryId() ?>  /AddProduct'"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            Manage Products
+        </a>
+    </div>
 
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
         <div class="text-center">
@@ -11,7 +30,7 @@
             </p>
         </div>
 
-        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php
             if (!empty($products)) {
                 foreach ($products as $product) {
@@ -19,23 +38,32 @@
                     $photoUrls = explode(',', $product['photo_urls']);
 
                     echo '
-                    <div class="relative block rounded-2xl border border-gray-100 shadow-lg bg-white p-6 hover:bg-gray-100 transition-transform duration-300 h-[500px]">
-                        <div class="relative group h-full">
-                            <div class="relative overflow-hidden rounded-lg">
-                                <img class="rounded-lg w-full h-[300px] object-cover transition-opacity duration-300 group-hover:opacity-0"
+                    <div class="relative block rounded-2xl border border-gray-200 shadow-lg bg-white p-6 hover:shadow-xl hover:scale-105 transition-transform duration-300 h-[550px]">
+                        <div class="relative group h-full flex flex-col">
+                            <div class="relative overflow-hidden rounded-lg h-[300px]">
+                                <img class="rounded-lg w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
                                     src="' . htmlspecialchars($photoUrls[0]) . '"
                                     alt="' . htmlspecialchars($product['name']) . '">
                                 
                                 <div class="absolute inset-0 grid grid-cols-1 gap-1 transition-opacity duration-300 opacity-0 group-hover:opacity-100">';
                     foreach (array_slice($photoUrls, 1) as $url) {
-                        echo '<img class="rounded-lg w-full h-[300px] object-cover"
+                        echo '<img class="rounded-lg w-full h-full object-cover"
                                         src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($product['name']) . '">';
                     }
                     echo '</div>
                             </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mt-4">' . htmlspecialchars($product['name']) . '</h3>
-                            <p class="text-sm text-gray-600 mt-2">' . htmlspecialchars($product['description']) . '</p>
-                            <span class="text-sm font-medium text-gray-700 mt-2">$' . number_format($product['unit_price'], 2) . '</span>
+                            <div class="mt-4 flex-1">
+                                <h3 class="text-lg font-semibold text-gray-800">' . htmlspecialchars($product['name']) . '</h3>
+                                <p class="text-sm text-gray-600 mt-2 line-clamp-3">' . htmlspecialchars($product['description']) . '</p>
+                            </div>
+                            <div class="mt-4">
+                                <span class="block text-sm font-medium text-gray-700">Price: $' . number_format($product['unit_price'], 2) . '</span>
+                                <span class="block text-sm font-medium text-gray-700">Quantity: ' . htmlspecialchars($product['quantity']) . '</span>
+                            </div>
+                            <a href="/product/' . htmlspecialchars($product['id']) . '" 
+                                class="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                View Product
+                            </a>
                         </div>
                     </div>';
                 }
