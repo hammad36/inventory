@@ -1,7 +1,7 @@
 <section class="bg-gradient-to-br from-blue-200 via-white to-blue-100 min-h-screen flex items-center justify-center relative">
 
     <!-- Back Button -->
-    <div class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30">
+    <div class="absolute top-4 left-4 sm:top-6 sm:left-8 z-30">
         <a href="/index"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
             <!-- Back Icon -->

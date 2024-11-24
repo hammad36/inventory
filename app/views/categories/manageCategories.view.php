@@ -25,7 +25,7 @@
     </div>
 
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="text-center">
+        <div class="text-center my-10">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
                 Categories Overview
             </h1>
@@ -34,8 +34,15 @@
             </p>
         </div>
 
+        <?php
+
+        use inventory\lib\alertHandler;
+
+        alertHandler::getInstance()->handleAlert();
+        ?>
         <!-- Categories Table -->
         <div class="mt-12 overflow-x-auto bg-white rounded-lg shadow-lg">
+
             <table class="min-w-full border-collapse divide-y divide-gray-200 text-sm">
                 <thead class="bg-gray-800 text-white">
                     <tr>
@@ -63,7 +70,7 @@
                                 <td class="px-6 py-4 text-gray-600">' . htmlspecialchars($category->getDescription()) . '</td>
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-4">
-                                        <a href="/categories/edit/' . $category->getCategoryId() . '" 
+                                        <a href="/categories/editCategory/' . $category->getCategoryId() . '" 
                                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none">
                                             Edit
                                         </a>

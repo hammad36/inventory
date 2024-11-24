@@ -5,11 +5,13 @@ namespace inventory\lib;
 class alertHandler
 {
     private static $instance = null;
+
+    // Tailwind alert styles mapped to alert types
     private $alertTypes = [
-        'add' => 'alert-success',
-        'remove' => 'alert-danger',
-        'edit' => 'alert-info',
-        'error' => 'alert-warning'
+        'add' => 'bg-green-200  text-green-900',
+        'remove' => 'bg-red-200 text-red-900',
+        'edit' => 'bg-blue-200  text-blue-900',
+        'error' => 'bg-yellow-200  text-yellow-900'
     ];
 
     private function __construct() {}
@@ -30,21 +32,28 @@ class alertHandler
     public function displayAlert($type, $message)
     {
         if (!isset($this->alertTypes[$type])) return;
-        $alertType = $this->alertTypes[$type];
+        $alertClass = $this->alertTypes[$type];
         $message = $this->sanitize($message);
 
-        echo '<div class="alert ' . $alertType . ' alert-dismissible fade show" role="alert">
-                ' . $message . '
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>';
+        echo <<<HTML
+        <div class="alert max-w-4xl mx-auto mt-4 flex items-start p-6 rounded-lg shadow-xl shadow-gray-300 hover:shadow-2xl hover:shadow-gray-400 
+        transition-shadow duration-300 border-gradient-to-r from-blue-400 to-purple-500 $alertClass" role="alert">
+            <div class="flex-1">
+                $message
+            </div>
+            <button type="button" class="ml-4 text-gray-500 hover:text-gray-700" onclick="this.parentElement.remove()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        HTML;
     }
 
     public function handleAlert()
     {
-        foreach ($this->alertTypes as $type => $alertClass) {
-            if (isset($_GET['msg']) && $_GET['type'] === $type) {
-                $this->displayAlert($type, $_GET['msg']);
-            }
+        if (isset($_GET['msg'], $_GET['type']) && isset($this->alertTypes[$_GET['type']])) {
+            $this->displayAlert($_GET['type'], $_GET['msg']);
         }
     }
 

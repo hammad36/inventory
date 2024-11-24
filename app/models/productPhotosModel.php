@@ -2,6 +2,7 @@
 
 namespace inventory\models;
 
+use inventory\lib\alertHandler;
 use inventory\lib\inputFilter;
 
 class productPhotosModel extends abstractModel
@@ -32,11 +33,6 @@ class productPhotosModel extends abstractModel
         $this->photo_url = $this->filterUrl($photo_url);
     }
 
-    public function setUploadedAt(string $uploaded_at): void
-    {
-        $this->uploaded_at = $this->filterDate($uploaded_at);
-    }
-
     public function getProductId(): int
     {
         return $this->product_id;
@@ -58,9 +54,11 @@ class productPhotosModel extends abstractModel
             $sql = 'SELECT 
                         p.product_id, 
                         p.name, 
-                        p.description, 
+                        p.description,
+                        p.sku, 
                         p.unit_price,
                         p.quantity,
+                        p.category_id,
                         GROUP_CONCAT(pp.photo_url) AS photo_urls
                     FROM products p
                     LEFT JOIN product_photos pp ON pp.product_id = p.product_id

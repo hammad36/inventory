@@ -72,14 +72,11 @@ class productsModel extends abstractModel
     {
         return $this->updated_at;
     }
-
-    // Get photo URL (optional)
     public function getPhotoUrl()
     {
-        return $this->photo_url ?? 'default.jpg'; // Default photo URL if not set
+        return $this->photo_url ?? 'default.jpg';
     }
 
-    // Setters
     public function setName($name)
     {
         $this->name = $this->filterString($name, 3, 100);

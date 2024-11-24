@@ -14,14 +14,15 @@
 
     <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
         <!-- Manage Products Button -->
-        <a href="/categories/category/'  <?php $category->getCategoryId() ?>  /AddProduct'"
+        <a href="/products?category_id=<?php echo $category->getCategoryId(); ?>"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
             Manage Products
         </a>
+
     </div>
 
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="text-center">
+        <div class="text-center my-10">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
                 <?php echo htmlspecialchars($category->getName()); ?> Products
             </h1>
@@ -60,7 +61,7 @@
                                 <span class="block text-sm font-medium text-gray-700">Price: $' . number_format($product['unit_price'], 2) . '</span>
                                 <span class="block text-sm font-medium text-gray-700">Quantity: ' . htmlspecialchars($product['quantity']) . '</span>
                             </div>
-                            <a href="/product/' . htmlspecialchars($product['id']) . '" 
+                            <a href="/product/' . htmlspecialchars($product['product_id']) . '" 
                                 class="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                 View Product
                             </a>
