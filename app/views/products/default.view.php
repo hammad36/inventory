@@ -3,10 +3,8 @@
 
     <!-- Add Product Button -->
     <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
-        <a href="/products/add" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            <svg class="w-5 h-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
+        <a href="/products/add?category_id=<?= $category ? $category->getCategoryId() : ''; ?>"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none">
             Add Product
         </a>
     </div>
@@ -73,7 +71,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-4">
-                                        <a href="/products/edit/<?= htmlspecialchars($product['product_id']) ?>"
+                                        <a href="/products/edit?/<?= htmlspecialchars($product['product_id']) ?>"
                                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none">
                                             Edit
                                         </a>

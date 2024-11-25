@@ -40,6 +40,7 @@
 
         alertHandler::getInstance()->handleAlert();
         ?>
+
         <!-- Categories Table -->
         <div class="mt-12 overflow-x-auto bg-white rounded-lg shadow-lg">
 
