@@ -128,12 +128,10 @@ class productsController extends abstractController
             return;
         }
 
-        // Use `category_id` from GET or fallback to the product's existing category
         $currentCategoryId = $this->filterInt($_GET['category_id'] ?? $product->getCategoryID());
-        $productPhotos = productPhotosModel::getPhotosGroupedByProductId([$productId]);
+        $productPhotos = productPhotosModel::getPhotosByProductId($productId);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Sanitize and validate input
             $name = $this->filterString($_POST['name'] ?? '');
             $sku = $this->filterString($_POST['sku'] ?? '');
             $description = $this->filterString($_POST['description'] ?? '');
@@ -141,7 +139,6 @@ class productsController extends abstractController
             $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
 
             if ($name && $sku && $unitPrice > 0) {
-                // Update product properties
                 $product->setName($name);
                 $product->setSku($sku);
                 $product->setDescription($description);
@@ -151,13 +148,18 @@ class productsController extends abstractController
 
                 if ($product->save()) {
                     // Update photos
-                    $this->updatePhotos($productId);
+                    $newPhotos = array_filter([$_POST['photo_url1'], $_POST['photo_url2']]); // Add more inputs if needed
+                    productPhotosModel::handlePhotoTransaction(function () use ($productId, $newPhotos) {
+                        productPhotosModel::deletePhotosByProductId($productId);
+                        return productPhotosModel::addPhotosToProduct($productId, $newPhotos);
+                    });
+
                     $this->redirectWithAlert('success', "/products?category_id={$currentCategoryId}", "Product updated successfully.");
                 } else {
-                    $this->redirectWithAlert('error', "/products/edit?id={$productId}&category_id={$currentCategoryId}", "Failed to update product.");
+                    $this->redirectWithAlert('error', "/products/edit?id={$productId}", "Failed to update product.");
                 }
             } else {
-                $this->redirectWithAlert('error', "/products/edit?id={$productId}&category_id={$currentCategoryId}", "Invalid input. Please fill in all required fields.");
+                $this->redirectWithAlert('error', "/products/edit?id={$productId}", "Invalid input. Please fill in all required fields.");
             }
         }
 
@@ -170,6 +172,7 @@ class productsController extends abstractController
 
         $this->_view();
     }
+
 
     private function updatePhotos($productId)
     {

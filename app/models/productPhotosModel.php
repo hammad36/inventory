@@ -156,4 +156,34 @@ class productPhotosModel extends abstractModel
             return false;
         }
     }
+
+    public static function getPhotosByProductId(int $productId): array
+    {
+        try {
+            // Establish a database connection
+            $db = databaseHandler::factory();
+            if (!$db) {
+                throw new \Exception('Database connection not established.');
+            }
+
+            // Prepare the query
+            $query = "SELECT photo_url FROM product_photos WHERE product_id = :product_id";
+            $stmt = $db->prepare($query);
+            $stmt->bindValue(':product_id', $productId, \PDO::PARAM_INT);
+
+            // Execute the query
+            if (!$stmt->execute()) {
+                throw new \Exception('Failed to execute query: ' . implode(' | ', $stmt->errorInfo()));
+            }
+
+            // Fetch and return results
+            $photos = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+            return $photos ?: []; // Return an empty array if no results are found
+
+        } catch (\Exception $e) {
+            // Log error or handle as needed
+            error_log($e->getMessage());
+            return []; // Return an empty array on failure
+        }
+    }
 }
