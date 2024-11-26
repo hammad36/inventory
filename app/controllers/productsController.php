@@ -189,6 +189,38 @@ class productsController extends abstractController
             productPhotosModel::addPhotosToProduct($productId, $photoUrls);
         }
     }
+
+
+    public function deleteAction()
+    {
+        // Step 1: Get the product ID from the request
+        $productId = $this->filterInt($_GET['id'] ?? null);
+
+        // Step 2: Validate the product ID
+        if (!$productId) {
+            $this->redirectWithAlert('error', '/products', 'Invalid product ID.');
+            return;
+        }
+
+        // Step 3: Find the product
+        $product = productsModel::getByPK($productId);
+
+        if (!$product) {
+            $this->redirectWithAlert('error', '/products', 'Product not found.');
+            return;
+        }
+
+        // Step 4: Attempt to delete the product and its photos
+        if ($product->deleteWithPhotos()) {
+            // Redirect with success message
+            $this->redirectWithAlert('success', '/products', 'Product and associated photos deleted successfully.');
+        } else {
+            // Redirect with error message
+            $this->redirectWithAlert('error', '/products', 'Failed to delete product or associated photos.');
+        }
+    }
+
+
     private function generateSku($categoryId)
     {
         $categoryPrefix = $categoryId ? 'CAT-' . $categoryId : 'GEN';

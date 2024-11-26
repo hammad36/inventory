@@ -11,6 +11,14 @@
 
     <!-- Form Container -->
     <div class="relative z-20 mx-auto w-full max-w-lg bg-white rounded-lg shadow-xl my-16 px-8 py-12 transform transition hover:scale-105 duration-300">
+        <!-- Alert Handler -->
+        <?php
+
+        use inventory\lib\alertHandler;
+
+        alertHandler::getInstance()->handleAlert();
+        ?>
+
         <h2 class="text-3xl font-bold text-center text-gray-800">Edit Product</h2>
         <p class="text-sm text-center text-gray-600 mt-2">Update the product details below.</p>
 
