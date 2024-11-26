@@ -2,6 +2,7 @@
 
 namespace inventory\models;
 
+use inventory\lib\alertHandler;
 use inventory\lib\database\databaseHandler;
 use inventory\lib\inputFilter;
 
@@ -36,7 +37,7 @@ class productsModel extends abstractModel
     protected static $primaryKey = 'product_id';
 
     // Getters
-    public function getProductId()
+    public function getProductID()
     {
         return $this->product_id;
     }
@@ -77,56 +78,109 @@ class productsModel extends abstractModel
         return $this->photo_url ?? 'default.jpg';
     }
 
+
+    //Setter
     public function setName($name)
     {
-        $this->name = $this->filterString($name, 3, 100);
+        $this->name = $name;
     }
-
     public function setSku($sku)
     {
-        $this->sku = $this->filterString($sku, 1, 50);
+        $this->sku = $sku;
     }
-
     public function setDescription($description)
     {
-        $this->description = $this->filterString($description, 0, 500);
+        $this->description = $description;
     }
-
+    public function setUnitPrice($unit_price)
+    {
+        $this->unit_price = $unit_price;
+    }
     public function setQuantity($quantity)
     {
-        $this->quantity = $this->filterInt($quantity);
+        $this->quantity = $quantity;
     }
-
-    public function setUnitPrice($price)
+    public function setCategoryID($category_id)
     {
-        $this->unit_price = $this->filterFloat($price);
+        $this->category_id = $category_id;
     }
 
-    public function setCategoryId($category_id)
+    // Method to fetch product with photos
+    public static function getProductWithPhotos(int $productId): ?self
     {
-        $this->category_id = $this->filterInt($category_id);
+        $product = self::getByPK($productId); // Fetch product by primary key
+        if ($product) {
+            // Fetch photos grouped by product_id
+            $photosGrouped = productPhotosModel::getPhotosGroupedByProductId([$productId]);
+            $product->photos = $photosGrouped[$productId] ?? []; // Get photos for this product
+        }
+        return $product;
     }
 
-    public function setCreatedAt($date)
-    {
-        $this->created_at = $this->filterDate($date);
-    }
 
-    public function setUpdatedAt($date)
-    {
-        $this->updated_at = $this->filterDate($date);
-    }
 
-    // Static methods
-    public static function getByPK($categoryId)
+    // Enhanced save with photos method
+    public function saveWithPhotos(array $photoUrls): bool
     {
         $db = databaseHandler::factory();
-        $query = 'SELECT * FROM ' . self::$tableName . ' WHERE category_id = :category_id';
-        $stmt = $db->prepare($query);
-        $stmt->bindParam(':category_id', $categoryId, \PDO::PARAM_INT);
-        $stmt->execute();
+        $db->beginTransaction();
 
-        // Ensure we return an array of product objects
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, __CLASS__);
+        try {
+            if (!$this->save()) {
+                throw new \Exception('Failed to save product.');
+            }
+
+            $productId = $this->getProductId();
+
+            // Delete existing photos
+            if (!productPhotosModel::deletePhotosByProductId($productId)) {
+                throw new \Exception('Failed to delete existing photos.');
+            }
+
+            // Add new photos
+            foreach ($photoUrls as $url) {
+                if (!empty($url)) {
+                    $photo = new productPhotosModel();
+                    $photo->setProductId($productId);
+                    $photo->setPhotoUrl($url);
+                    if (!$photo->save()) {
+                        throw new \Exception('Failed to save product photo.');
+                    }
+                }
+            }
+
+            $db->commit();
+            return true;
+        } catch (\Exception $e) {
+            $db->rollBack();
+            alertHandler::getInstance()->displayAlert('error', $e->getMessage());
+            return false;
+        }
+    }
+
+    // Enhanced delete with photos method
+    public function deleteWithPhotos(): bool
+    {
+        $db = databaseHandler::factory();
+        $db->beginTransaction();
+
+        try {
+            $productId = $this->getProductId();
+
+            if (!productPhotosModel::deletePhotosByProductId($productId)) {
+                throw new \Exception('Failed to delete associated photos.');
+            }
+
+            if (!$this->delete()) {
+                throw new \Exception('Failed to delete product.');
+            }
+
+            $db->commit();
+            return true;
+        } catch (\Exception $e) {
+            $db->rollBack();
+            alertHandler::getInstance()->displayAlert('error', $e->getMessage());
+            return false;
+        }
     }
 }

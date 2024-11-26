@@ -82,16 +82,20 @@ class productsController extends abstractController
                 $product->setDescription($description);
                 $product->setQuantity($quantity);
                 $product->setUnitPrice($unitPrice);
-                $product->setCategoryId($categoryId);
+                $product->setCategoryID($categoryId);
 
                 if ($product->save()) {
                     $productId = $product->getProductId();
 
-                    // Save photo URLs
-                    $photoUrl1 = $this->filterString($_POST['photo_url1'] ?? '');
-                    $photoUrl2 = $this->filterString($_POST['photo_url2'] ?? '');
-                    if (!empty($photoUrl1)) $this->savePhoto($productId, $photoUrl1);
-                    if (!empty($photoUrl2)) $this->savePhoto($productId, $photoUrl2);
+                    // Save photo URLs in batch
+                    $photoUrls = array_filter([
+                        $this->filterString($_POST['photo_url1'] ?? ''),
+                        $this->filterString($_POST['photo_url2'] ?? '')
+                    ]);
+
+                    if (!empty($photoUrls)) {
+                        productPhotosModel::addPhotosToProduct($productId, $photoUrls);
+                    }
 
                     $this->redirectWithAlert('success', '/products/manageProducts', "Product added successfully.");
                 } else {
@@ -106,23 +110,6 @@ class productsController extends abstractController
         $this->_data['currentCategoryId'] = $currentCategoryId;
 
         $this->_view();
-    }
-
-    // Save photo URL
-    private function savePhoto($productId, $photoUrl)
-    {
-        $photoModel = new productPhotosModel();
-        $photoModel->setProductId($productId);
-        $photoModel->setPhotoUrl($photoUrl);
-        $photoModel->save();
-    }
-
-    // Generate SKU
-    private function generateSku($categoryId)
-    {
-        $categoryPrefix = $categoryId ? 'CAT-' . $categoryId : 'GEN';
-        $uniqueId = strtoupper(substr(uniqid(), -5));
-        return "{$categoryPrefix}-{$uniqueId}";
     }
 
     public function editAction()
@@ -141,6 +128,10 @@ class productsController extends abstractController
             return;
         }
 
+        // Use `category_id` from GET or fallback to the product's existing category
+        $currentCategoryId = $this->filterInt($_GET['category_id'] ?? $product->getCategoryID());
+        $productPhotos = productPhotosModel::getPhotosGroupedByProductId([$productId]);
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Sanitize and validate input
             $name = $this->filterString($_POST['name'] ?? '');
@@ -148,51 +139,59 @@ class productsController extends abstractController
             $description = $this->filterString($_POST['description'] ?? '');
             $quantity = $this->filterInt($_POST['quantity'] ?? 0);
             $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
-            $categoryId = $this->filterInt($_POST['category_id'] ?? $_GET['category_id'] ?? null);
 
-            if ($name && $sku && $unitPrice > 0 && $categoryId) {
+            if ($name && $sku && $unitPrice > 0) {
                 // Update product properties
                 $product->setName($name);
                 $product->setSku($sku);
                 $product->setDescription($description);
                 $product->setQuantity($quantity);
                 $product->setUnitPrice($unitPrice);
-                $product->setCategoryId($categoryId);
+                $product->setCategoryID($currentCategoryId);
 
                 if ($product->save()) {
+                    // Update photos
                     $this->updatePhotos($productId);
-                    $this->redirectWithAlert('success', '/products/manageProducts', "Product updated successfully.");
+                    $this->redirectWithAlert('success', "/products?category_id={$currentCategoryId}", "Product updated successfully.");
                 } else {
-                    $this->redirectWithAlert('error', '/products/edit?id=' . $productId, "Failed to update product.");
+                    $this->redirectWithAlert('error', "/products/edit?id={$productId}&category_id={$currentCategoryId}", "Failed to update product.");
                 }
             } else {
-                $this->redirectWithAlert('error', '/products/edit?id=' . $productId, "Invalid input. Please fill in all required fields.");
+                $this->redirectWithAlert('error', "/products/edit?id={$productId}&category_id={$currentCategoryId}", "Invalid input. Please fill in all required fields.");
             }
         }
 
-        $this->_data['product'] = $product;
-        $this->_data['currentCategoryId'] = $product->getCategoryId();
+        // Pass data to view
+        $this->_data = [
+            'product' => $product,
+            'photos' => $productPhotos,
+            'currentCategoryId' => $currentCategoryId,
+        ];
 
         $this->_view();
     }
+
     private function updatePhotos($productId)
     {
-        // Delete old photos
-        $oldPhotos = productPhotosModel::getByCategoryId($productId);
-        foreach ($oldPhotos as $oldPhoto) {
-            @unlink($oldPhoto['photo_url']); // Delete file if exists
-            $photoModel = productPhotosModel::getByPK($oldPhoto['photo_id']);
-            $photoModel->delete(); // Remove record from database
+        // Delete old photos using the model's method
+        productPhotosModel::deletePhotosByProductId($productId);
+
+        // Add new photos using the new method
+        $photoUrls = array_filter([
+            $this->filterString($_POST['photo_url1'] ?? ''),
+            $this->filterString($_POST['photo_url2'] ?? '')
+        ]);
+
+        if (!empty($photoUrls)) {
+            productPhotosModel::addPhotosToProduct($productId, $photoUrls);
         }
-
-        // Add new photos
-        $photoUrl1 = $this->filterString($_POST['photo_url1'] ?? '');
-        $photoUrl2 = $this->filterString($_POST['photo_url2'] ?? '');
-        if (!empty($photoUrl1)) $this->savePhoto($productId, $photoUrl1);
-        if (!empty($photoUrl2)) $this->savePhoto($productId, $photoUrl2);
     }
-
-
+    private function generateSku($categoryId)
+    {
+        $categoryPrefix = $categoryId ? 'CAT-' . $categoryId : 'GEN';
+        $uniqueId = strtoupper(substr(uniqid(), -5));
+        return "{$categoryPrefix}-{$uniqueId}";
+    }
     // Redirect with alert
     private function redirectWithAlert(string $alertType, string $url, string $message)
     {

@@ -71,11 +71,12 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-4">
-                                        <a href="/products/edit?/<?= htmlspecialchars($product['product_id']) ?>"
+                                        <a href="/products/edit?id=<?= htmlspecialchars($product['product_id']) ?>"
                                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none">
                                             Edit
                                         </a>
-                                        <form method="POST" action="/products/delete/<?= htmlspecialchars($product['product_id']) ?>"
+
+                                        <form method="POST" action="/products/delete?id=<?= htmlspecialchars($product['product_id']) ?>"
                                             onsubmit="return confirm('Are you sure you want to delete this product?');">
                                             <button type="submit"
                                                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg shadow-sm hover:bg-red-700 focus:outline-none">

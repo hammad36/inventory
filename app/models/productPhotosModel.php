@@ -3,17 +3,20 @@
 namespace inventory\models;
 
 use inventory\lib\alertHandler;
+use inventory\lib\database\databaseHandler;
 use inventory\lib\inputFilter;
 
 class productPhotosModel extends abstractModel
 {
     use inputFilter;
 
+    // Class properties
     protected $photo_id;
     protected $product_id;
     protected $photo_url;
     protected $uploaded_at;
 
+    // Database schema
     protected static $tableName = 'product_photos';
     protected static $tableSchema = [
         'product_id' => self::DATA_TYPE_INT,
@@ -23,6 +26,7 @@ class productPhotosModel extends abstractModel
 
     protected static $primaryKey = 'photo_id';
 
+    // Setters and Getters
     public function setProductId(int $product_id): void
     {
         $this->product_id = $this->filterInt($product_id);
@@ -48,7 +52,68 @@ class productPhotosModel extends abstractModel
         return $this->uploaded_at;
     }
 
-    public static function getByCategoryId($categoryId)
+    // Get photos grouped by product_id
+    public static function getPhotosGroupedByProductId(array $productIds): array
+    {
+        return self::executeWithConnection(function ($connection) use ($productIds) {
+            $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+            $sql = "SELECT product_id, GROUP_CONCAT(photo_url) AS photo_urls
+                    FROM product_photos
+                    WHERE product_id IN ($placeholders)
+                    GROUP BY product_id";
+
+            $stmt = $connection->prepare($sql);
+            $stmt->execute($productIds);
+
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return array_column($result, 'photo_urls', 'product_id'); // Map by product_id
+        });
+    }
+
+    // Delete photos by product_id
+    public static function deletePhotosByProductId(int $productId): bool
+    {
+        return self::executeWithConnection(function ($connection) use ($productId) {
+            $sql = 'DELETE FROM product_photos WHERE product_id = :product_id';
+            $stmt = $connection->prepare($sql);
+            $stmt->bindValue(':product_id', $productId, \PDO::PARAM_INT);
+            return $stmt->execute();
+        });
+    }
+
+    // Add multiple photos at once
+    public static function addPhotosToProduct(int $productId, array $photoUrls): bool
+    {
+        if (empty($photoUrls)) {
+            return false;
+        }
+
+        return self::executeWithConnection(function ($connection) use ($productId, $photoUrls) {
+            $sql = 'INSERT INTO product_photos (product_id, photo_url, uploaded_at) VALUES ';
+            $values = [];
+            $placeholders = [];
+
+            $date = date('Y-m-d H:i:s'); // Current timestamp for `uploaded_at`
+            foreach ($photoUrls as $photoUrl) {
+                $placeholders[] = '(:product_id, :photo_url, :uploaded_at)';
+                $values[] = ['product_id' => $productId, 'photo_url' => $photoUrl, 'uploaded_at' => $date];
+            }
+
+            $sql .= implode(',', $placeholders);
+
+            $stmt = $connection->prepare($sql);
+            foreach ($values as $index => $data) {
+                $stmt->bindValue(":product_id", $data['product_id'], \PDO::PARAM_INT);
+                $stmt->bindValue(":photo_url", $data['photo_url'], \PDO::PARAM_STR);
+                $stmt->bindValue(":uploaded_at", $data['uploaded_at'], \PDO::PARAM_STR);
+            }
+
+            return $stmt->execute();
+        });
+    }
+
+    // Fetch products with their associated photos by category ID
+    public static function getByCategoryId(int $categoryId): array
     {
         return self::executeWithConnection(function ($connection) use ($categoryId) {
             $sql = 'SELECT 
@@ -71,5 +136,24 @@ class productPhotosModel extends abstractModel
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         });
+    }
+
+    // Handle transactions for adding, deleting photos
+    public static function handlePhotoTransaction(callable $operation): bool
+    {
+        $db = databaseHandler::factory();
+        $db->beginTransaction();
+        try {
+            if ($operation()) {
+                $db->commit();
+                return true;
+            } else {
+                throw new \Exception('Failed to perform operation on photos.');
+            }
+        } catch (\Exception $e) {
+            $db->rollBack();
+            alertHandler::getInstance()->displayAlert('error', $e->getMessage());
+            return false;
+        }
     }
 }
