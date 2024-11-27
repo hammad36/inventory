@@ -3,7 +3,6 @@
 namespace inventory\controllers;
 
 use inventory\lib\frontController;
-use inventory\models\categoriesModel;
 
 class abstractController
 {
