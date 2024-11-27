@@ -9,13 +9,9 @@ use inventory\models\productsModel;
 use inventory\models\productPhotosModel;
 use inventory\models\categoriesModel;
 
-class about extends abstractController
+class adjustments extends abstractController
 {
     public function defaultAction()
-    {
-        $this->_view();
-    }
-    public function addAction()
     {
         $this->_view();
     }
