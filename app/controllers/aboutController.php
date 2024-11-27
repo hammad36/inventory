@@ -3,20 +3,21 @@
 namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
-use inventory\lib\InputFilter;
-use inventory\lib\alertHandler;
-use inventory\models\productsModel;
-use inventory\models\productPhotosModel;
-use inventory\models\categoriesModel;
 
 class about extends abstractController
 {
     public function defaultAction()
     {
+        echo 'hello';
         $this->_view();
     }
-    public function addAction()
+    public function _view()
     {
-        $this->_view();
+        $view = VIEWS_PATH . $this->_controller . DS . $this->_action . '.view.php';
+        if (file_exists($view)) {
+            require_once $view; // Temporary test
+        } else {
+            echo 'View not found: ' . $view;
+        }
     }
 }
