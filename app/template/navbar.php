@@ -15,7 +15,7 @@
                 <div class="flex flex-1 items-center justify-center sm:justify-start">
                     <!-- <img class="h-10 w-auto" src="images/logo.png" alt="Company Logo"> -->
                     <img class="h-10 w-auto" src="../../images/logo.png" alt="Company Logo">
-                    <span class="text-white font-semibold text-lg ml-2">InvenHammad</span>
+                    <a href="/index" class="text-white font-semibold text-lg ml-2">InvenHammad</a>
 
                     <!-- Desktop Navigation -->
                     <div class="hidden sm:flex sm:ml-6 space-x-4 ml-10">

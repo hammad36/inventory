@@ -68,6 +68,16 @@ trait InputFilter
         return filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) !== null;
     }
 
+    private function validAge($dateOfBirth, $minAge)
+    {
+        $dob = new DateTime($dateOfBirth);
+        $today = new DateTime();
+        $age = $today->diff($dob)->y;
+
+        return $age >= $minAge;
+    }
+
+
     public function filterIntArray(array $inputArray): ?array
     {
         return $this->filterArray($inputArray, fn($item) => $this->filterInt($item));
