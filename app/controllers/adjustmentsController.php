@@ -9,7 +9,7 @@ use inventory\models\productsModel;
 use inventory\models\productPhotosModel;
 use inventory\models\categoriesModel;
 
-class adjustments extends abstractController
+class adjustmentsController extends abstractController
 {
     public function defaultAction()
     {

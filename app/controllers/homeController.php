@@ -4,7 +4,7 @@ namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
 
-class reportsController extends abstractController
+class homeController extends abstractController
 {
     public function defaultAction()
     {

@@ -9,6 +9,7 @@ class alertHandler
     // Tailwind alert styles mapped to alert types
     private $alertTypes = [
         'add' => 'bg-green-200  text-green-900',
+        'success' => 'bg-green-200  text-green-900',
         'remove' => 'bg-red-200 text-red-900',
         'edit' => 'bg-blue-200  text-blue-900',
         'error' => 'bg-yellow-200  text-yellow-900'

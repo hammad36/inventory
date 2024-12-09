@@ -3,119 +3,174 @@
 namespace inventory\controllers;
 
 use inventory\lib\InputFilter;
-use inventory\lib\alertHandler;
-use inventory\models\usersModel;
+use inventory\lib\AlertHandler;
+use inventory\models\UsersModel;
 
-class indexController extends abstractController
+class IndexController extends AbstractController
 {
     use InputFilter;
 
-    private $alertHandler;
+    private AlertHandler $alertHandler;
 
     public function __construct()
     {
-        $this->alertHandler = alertHandler::getInstance();
+        $this->alertHandler = AlertHandler::getInstance();
     }
 
-    public function defaultAction()
+    public function defaultAction(): void
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+            $password = $_POST['password'];
+
+            if (!$email || !$password) {
+                $this->redirectWithAlert('error', 'login', 'Invalid email or password.');
+                return;
+            }
+
+            $user = UsersModel::findByEmail($email);
+            if ($user && password_verify($password, $user->getPassword())) {
+                $this->initializeUserSession($user);
+                $this->redirectWithAlert('success', 'dashboard', 'Welcome back!');
+            } else {
+                $this->redirectWithAlert('error', 'login', 'Invalid email or password.');
+            }
+        }
+
         $this->_view();
     }
 
-    public function registrationAction()
+    public function registrationAction(): void
     {
-        // Start session if not already started
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // CSRF Token Validation with hash_equals for security
-            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-                $this->redirectWithAlert('error', 'registration', 'Invalid CSRF token. Please refresh the page and try again.');
-                return;
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
             }
 
-            // Clear the CSRF token after successful validation
+            // CSRF Protection
+            if (!$this->validateCsrfToken($_POST['csrf_token'])) {
+                $this->redirectWithAlert('error', 'registration', 'Invalid CSRF token. Refresh and try again.');
+                return;
+            }
             unset($_SESSION['csrf_token']);
 
-            // Sanitize and validate user inputs
-            $firstName = $this->filterString($_POST['first_name']);
-            $lastName = $this->filterString($_POST['last_name']);
-            $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-            $password = $_POST['password'];
-            $confirmPassword = $_POST['confirm_password'];
-            $phone = preg_replace('/\D/', '', $_POST['phone']);
-            $dateOfBirth = $_POST['date_of_birth'];
-            $gender = $_POST['gender'];
-
-            // Validate fields
-            if (!$firstName || !$lastName || !$email || !$password || !$confirmPassword || !$phone || !$dateOfBirth || !$gender) {
-                $this->redirectWithAlert('error', 'registration', 'All fields are required.');
+            // Input sanitization and validation
+            $inputs = $this->sanitizeRegistrationInputs($_POST);
+            $validationResult = $this->validateRegistrationInputs($inputs);
+            if ($validationResult['error']) {
+                $this->redirectWithAlert('error', 'registration', $validationResult['message']);
                 return;
             }
 
-            if ($password !== $confirmPassword) {
-                $this->redirectWithAlert('error', 'registration', 'Passwords do not match.');
-                return;
-            }
-
-            if (strlen($password) < 8) {
-                $this->redirectWithAlert('error', 'registration', 'Password must be at least 8 characters long.');
-                return;
-            }
-
-            if (!$this->validAge($dateOfBirth, 16)) {
-                $this->redirectWithAlert('error', 'registration', 'You must be at least 16 years old to register.');
-                return;
-            }
-
-            if (usersModel::findByEmail($email)) {
-                $this->redirectWithAlert('error', 'registration', 'This email is already registered.');
-                return;
-            }
-
-            // Create and populate the user instance
-            $user = new usersModel();
-            $user->setFirstName($firstName);
-            $user->setLastName($lastName);
-            $user->setEmail($email);
-            $user->setPassword(password_hash($password, PASSWORD_BCRYPT));
-            $user->setPhone($phone);
-            $user->setDateOfBirth($dateOfBirth);
-            $user->setGender($gender);
-            $user->setRole('user');
-            $user->setStatus(1);
+            // Save the user
+            $user = new UsersModel();
+            $this->mapRegistrationInputsToUser($user, $inputs);
 
             if ($user->save()) {
-                $this->redirectWithAlert('add', 'login', 'Your account has been successfully created!');
+                $this->redirectWithAlert('success', 'login', 'Account created successfully! Log in to get started.');
             } else {
                 $this->redirectWithAlert('error', 'registration', 'Failed to create account. Please try again.');
             }
         } else {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $this->generateCsrfToken();
         }
 
         $this->_view();
     }
 
-
-    public function loginAction()
+    public function loginAction(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = usersModel::findByEmail($_POST['email']);
-            if ($user && password_verify($_POST['password'], $user->getPassword())) {
-                $_SESSION['user'] = $user;
-                header('Location: /inventory');
-                exit;
+            $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+            $password = $_POST['password'];
+
+            if (!$email || !$password) {
+                $this->redirectWithAlert('error', 'login', 'Invalid email or password.');
+                return;
+            }
+
+            $user = UsersModel::findByEmail($email);
+            if ($user && password_verify($password, $user->getPassword())) {
+                $this->initializeUserSession($user);
+                $this->redirectWithAlert('success', 'dashboard', 'Welcome back!');
             } else {
-                $this->redirectWithAlert('error', 'registration', 'Invalid email or password.');
+                $this->redirectWithAlert('error', 'login', 'Invalid email or password.');
             }
         }
+
         $this->_view();
     }
 
-    private function redirectWithAlert(string $alertType, string $url, string $message)
+    private function sanitizeRegistrationInputs(array $data): array
+    {
+        return [
+            'first_name' => $this->filterString($data['first_name']),
+            'last_name' => $this->filterString($data['last_name']),
+            'email' => filter_var($data['email'], FILTER_VALIDATE_EMAIL),
+            'password' => $data['password'],
+            'confirm_password' => $data['confirm_password'],
+            'phone' => preg_replace('/\D/', '', $data['phone']),
+            'date_of_birth' => $data['date_of_birth'],
+            'gender' => $data['gender'],
+        ];
+    }
+
+    private function validateRegistrationInputs(array $inputs): array
+    {
+        if (in_array(null, $inputs, true)) {
+            return ['error' => true, 'message' => 'All fields are required.'];
+        }
+        if ($inputs['password'] !== $inputs['confirm_password']) {
+            return ['error' => true, 'message' => 'Passwords do not match.'];
+        }
+        if (strlen($inputs['password']) < 8) {
+            return ['error' => true, 'message' => 'Password must be at least 8 characters long.'];
+        }
+
+        if (UsersModel::findByEmail($inputs['email'])) {
+            return ['error' => true, 'message' => 'Email is already registered.'];
+        }
+        return ['error' => false];
+    }
+
+    private function mapRegistrationInputsToUser(UsersModel $user, array $inputs): void
+    {
+        $user->setFirstName($inputs['first_name']);
+        $user->setLastName($inputs['last_name']);
+        $user->setEmail($inputs['email']);
+        $user->setPassword($inputs['password']);
+        $user->setPhone($inputs['phone']);
+        $user->setDateOfBirth($inputs['date_of_birth']);
+        $user->setGender($inputs['gender']);
+        $user->setRole('user');
+        $user->setStatus(1);
+    }
+
+    private function generateCsrfToken(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    private function validateCsrfToken(string $token): bool
+    {
+        return hash_equals($_SESSION['csrf_token'] ?? '', $token);
+    }
+
+    private function initializeUserSession(UsersModel $user): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = $user->getUserID();
+        $_SESSION['user_name'] = "{$user->getFirstName()} {$user->getLastName()}";
+        $_SESSION['user_role'] = $user->getRole();
+    }
+
+    private function redirectWithAlert(string $alertType, string $url, string $message): void
     {
         $this->alertHandler->redirectWithMessage($url, $alertType, $message);
     }

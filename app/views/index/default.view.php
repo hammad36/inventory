@@ -1,72 +1,132 @@
-<section
-    class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-20 sm:pb-16 sm:pt-32 lg:pb-24 xl:pb-32 xl:pt-40">
-    <!-- Background Animation -->
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50 animate-gradient"></div>
-    <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl animate-fade-up">
-                Smart Inventory Management Made Easy
-                <span class="text-blue-600">— Control at Your Fingertips</span>
-            </h1>
-            <p class="mt-6 text-lg leading-8 text-gray-700 animate-fade-up animation-delay-200">
-                Discover how our system streamlines your inventory process with powerful tools, intuitive design,
-                and real-time analytics tailored for your success.
-            </p>
-            <div class="mt-10 flex items-center justify-center gap-x-6 animate-fade-up animation-delay-400">
-                <a class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-lg font-semibold text-white shadow-lg transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                    href="/index/login">Get Started
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                </a>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>InvenHammad</title>
+</head>
+
+<body class="bg-gray-100 text-black">
+    <section class="bg-gradient-to-br from-blue-100 via-white to-blue-50 min-h-screen flex items-center justify-center relative">
+
+        <!-- Back Button -->
+        <div class="absolute top-4 left-4 sm:top-6 sm:left-8 z-30">
+            <a href="/home"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+            </a>
         </div>
 
-        <!-- Feature Cards with Animation -->
-        <div class="relative mx-auto mt-12 max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div
-                class="rounded-2xl border border-gray-100 shadow-lg bg-white p-4 hover:scale-105 transition-transform duration-300 animate-fade-up">
-                <img class="rounded-lg mb-4 w-full object-cover" src="/images/1.jpg" alt="Feature 1">
-                <h3 class="text-lg font-semibold text-gray-800">Real-Time Stock Tracking</h3>
-                <p class="text-sm text-gray-600">Monitor your inventory levels and movements with precision.</p>
-            </div>
-            <div
-                class="rounded-2xl border border-gray-100 shadow-lg bg-white p-4 hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-200">
-                <img class="rounded-lg mb-4 w-full object-cover" src="/images/2.jpg" alt="Feature 2">
-                <h3 class="text-lg font-semibold text-gray-800">Insightful Reports</h3>
-                <p class="text-sm text-gray-600">Generate detailed reports to make smarter business decisions.</p>
-            </div>
-            <div
-                class="rounded-2xl border border-gray-100 shadow-lg bg-white p-4 hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                <img class="rounded-lg mb-4 w-full object-cover" src="/images/3.jpg" alt="Feature 3">
-                <h3 class="text-lg font-semibold text-gray-800">Automated Alerts</h3>
-                <p class="text-sm text-gray-600">Stay updated with automated notifications for low stock.</p>
-            </div>
-        </div>
+        <div class="relative my-12 z-20 mx-auto px-6 lg:px-8">
 
-        <!-- Statistics and Chart Section -->
-        <div class="mt-16 text-center">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">Your Business at a Glance</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-up">
-                <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">500+</p>
-                    <p class="text-gray-700">Products Managed</p>
+            <?php
+
+            use inventory\lib\alertHandler;
+
+            $alertHandler = alertHandler::getInstance();
+            $alertHandler->handleAlert();
+            ?>
+
+            <!-- Form Container -->
+            <div class="w-full max-w-3xl bg-white my-16 rounded-lg p-8 shadow-xl dark:border dark:border-gray-700 sm:max-w-xl xl:p-10 dark:bg-gray-900">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">Create Your Account</h2>
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-6">
+                    Join us and start managing your inventory effortlessly!
+                </p>
+
+                <!-- Social Media Login -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+                    <!-- Google Login -->
+                    <div id="g_id_onload"
+                        data-client_id="281698038178-al3jc4eqjf8nie8buk55djra2bqk7841.apps.googleusercontent.com"
+                        data-context="signin"
+                        data-ux_mode="popup"
+                        data-login_uri="loginCallback"
+                        data-itp_support="true">
+                    </div>
+
+                    <div class="g_id_signin"
+                        data-type="standard"
+                        data-shape="pill"
+                        data-theme="outline"
+                        data-text="continue_with"
+                        data-size="large"
+                        data-locale="en-US"
+                        data-logo_alignment="left">
+                    </div>
+
+                    <!-- Facebook Login -->
+                    <a href="/auth/facebook"
+                        class="w-full sm:w-auto flex items-center justify-center px-4 rounded-full text-sm font-medium text-white bg-blue-600">
+                        <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M22.676 0H1.324C.594 0 0 .594 0 1.324v21.352C0 23.406.594 24 1.324 24H12v-9.293H9.293V11.5H12V8.793c0-2.689 1.548-4.207 3.915-4.207 1.136 0 2.332.205 2.332.205v2.573h-1.311c-1.294 0-1.693.804-1.693 1.627V11.5h3.012l-.481 3.207h-2.531V24h4.953c.73 0 1.324-.594 1.324-1.324V1.324C24 .594 23.406 0 22.676 0z" />
+                        </svg>
+                        Continue with Facebook
+                    </a>
                 </div>
-                <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">1,200+</p>
-                    <p class="text-gray-700">Orders Processed</p>
+
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300 dark:border-gray-700"></div>
+                    </div>
+                    <div class="relative text-center">
+                        <span class="bg-white dark:bg-gray-900 px-4 text-sm text-gray-500 dark:text-gray-400">Or sign in with your email</span>
+                    </div>
                 </div>
-                <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">300+</p>
-                    <p class="text-gray-700">Active Clients</p>
-                </div>
-                <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">99%</p>
-                    <p class="text-gray-700">Accuracy Rate</p>
-                </div>
+
+                <form class="space-y-6" action="/index" method="POST">
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Email</label>
+                        <input type="email" name="email" id="email" placeholder="you@example.com" required
+                            class="w-full px-4 py-2 text-gray-900 bg-gray-50 border rounded-lg focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
+                        <input type="password" name="password" id="password" placeholder="••••••••" required
+                            class="w-full px-4 py-2 text-gray-900 bg-gray-50 border rounded-lg focus:ring-blue-500 focus:border-blue-500 border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    </div>
+
+                    <!-- Remember Me and Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input id="remember" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border rounded focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500">
+                            <label for="remember" class="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember Me</label>
+                        </div>
+                        <a href="/forgot-password" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot password?</a>
+                    </div>
+
+                    <!-- Sign In Button -->
+                    <button type="submit"
+                        class="w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                        Sign In
+                    </button>
+
+                    <!-- Sign Up Link -->
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                        Don’t have an account yet?
+                        <a href="/index/registration" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</a>
+                    </p>
+                </form>
             </div>
         </div>
-    </div>
-</section>
+        </div>
+    </section>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script>
+        function callback(response) {
+            console.log(response);
+        }
+    </script>
+</body>
+
+</html>

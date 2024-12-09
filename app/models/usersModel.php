@@ -14,11 +14,9 @@ class usersModel extends abstractModel
     protected $last_name;
     protected $email;
     protected $password;
-    protected $phone;
     protected $date_of_birth;
     protected $gender;
     protected $role;
-    protected $status;
     protected $created_at;
     protected $updated_at;
 
@@ -29,11 +27,9 @@ class usersModel extends abstractModel
         'last_name'       => self::DATA_TYPE_STR,
         'email'           => self::DATA_TYPE_STR,
         'password'        => self::DATA_TYPE_STR,
-        'phone'           => self::DATA_TYPE_STR,
         'date_of_birth'   => self::DATA_TYPE_DATE,
         'gender'          => self::DATA_TYPE_STR,
         'role'            => self::DATA_TYPE_STR,
-        'status'          => self::DATA_TYPE_INT,
         'created_at'      => self::DATA_TYPE_DATE,
         'updated_at'      => self::DATA_TYPE_DATE,
     ];
@@ -91,18 +87,7 @@ class usersModel extends abstractModel
         $this->role = $role;
     }
 
-    public function setStatus($status)
-    {
-        if (!in_array($status, [0, 1])) {
-            throw new \Exception("Invalid status. Allowed values: 0 (inactive), 1 (active).");
-        }
-        $this->status = $status;
-    }
 
-    public function setPhone($phone)
-    {
-        $this->phone = $this->filterString($phone, 0, 15);
-    }
 
     public function setCreatedAt($createdAt)
     {
@@ -115,6 +100,10 @@ class usersModel extends abstractModel
     }
 
     // Getters
+    public function getUserID()
+    {
+        return $this->user_id;
+    }
     public function getFirstName()
     {
         return $this->first_name;
@@ -143,14 +132,7 @@ class usersModel extends abstractModel
     {
         return $this->role;
     }
-    public function getStatus()
-    {
-        return $this->status;
-    }
-    public function getPhone()
-    {
-        return $this->phone;
-    }
+
     public function getCreatedAt()
     {
         return $this->created_at;
@@ -167,12 +149,5 @@ class usersModel extends abstractModel
         $params = ['email' => [self::DATA_TYPE_STR, $email]];
         $result = self::get($sql, $params);
         return !empty($result) ? $result[0] : null;
-    }
-
-    public static function findActiveUsers()
-    {
-        $sql = 'SELECT * FROM ' . static::$tableName . ' WHERE status = 1';
-        $result = self::get($sql);
-        return $result;
     }
 }
