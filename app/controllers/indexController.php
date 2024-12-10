@@ -22,7 +22,12 @@ class IndexController extends AbstractController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleLogin();
         } else {
-            $this->_view();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $this->_view([
+                'user' => $_SESSION['user'] ?? null
+            ]);
         }
     }
 
@@ -51,7 +56,12 @@ class IndexController extends AbstractController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleRegistration();
         } else {
-            $this->_view();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $this->_view([
+                'user' => $_SESSION['user'] ?? null
+            ]);
         }
     }
 

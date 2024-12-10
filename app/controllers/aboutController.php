@@ -56,7 +56,12 @@ class aboutController extends abstractController
             }
         }
 
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
 

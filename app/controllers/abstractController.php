@@ -44,7 +44,7 @@ class abstractController
         } else {
             $view = VIEWS_PATH . $this->_controller . DS . $this->_action . '.view.php';
             if (file_exists($view)) {
-                $this->_template->setActionViewFile($view,);
+                $this->_template->setActionViewFile($view);
                 $this->_template->setAppData($this->_data);
                 $this->_template->renderApp();
             } else {

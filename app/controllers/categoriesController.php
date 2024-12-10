@@ -46,7 +46,12 @@ class categoriesController extends abstractController
             'products' => productPhotosModel::getByCategoryId($categoryId),
         ];
 
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
 
@@ -61,7 +66,12 @@ class categoriesController extends abstractController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->processCategoryForm(new categoriesModel(), '/categories/manageCategories/AddNewCategory', 'add', 'Category added successfully.');
         } else {
-            $this->_view();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $this->_view([
+                'user' => $_SESSION['user'] ?? null
+            ]);
         }
     }
 
@@ -77,7 +87,12 @@ class categoriesController extends abstractController
             $this->processCategoryForm($category, "/categories/editCategory/$categoryId", 'edit', 'Category updated successfully.');
         } else {
             $this->_data['category'] = $category;
-            $this->_view();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $this->_view([
+                'user' => $_SESSION['user'] ?? null
+            ]);
         }
     }
 
@@ -121,7 +136,12 @@ class categoriesController extends abstractController
     private function renderCategoriesView(array $categories)
     {
         $this->_data['categories'] = $categories;
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
 

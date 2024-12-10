@@ -6,6 +6,11 @@ class notFoundController extends abstractController
 {
     public function notFoundAction()
     {
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 }

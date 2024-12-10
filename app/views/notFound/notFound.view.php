@@ -11,7 +11,6 @@
 <body class="bg-gray-100 text-white">
 
     <!-- Navbar -->
-    <!-- Navbar -->
     <nav class="bg-gray-800">
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between relative">
@@ -75,21 +74,6 @@
                     </div>
                 </div>
 
-                <!-- User Menu -->
-                <div class="relative ml-3">
-                    <button id="user-menu-button" class="flex bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                        onclick="toggleDropdown('user-menu')">
-                        <span class="sr-only">Open user menu</span>
-                        <!-- <img class="h-10 w-10 rounded-full" src="images/avatar322.jpg" alt="User avatar"> -->
-                        <img class="h-10 w-10 rounded-full" src="../../images/avatar322.jpg" alt="User avatar">
-                    </button>
-                    <div id="user-menu"
-                        class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
-                    </div>
-                </div>
 
             </div>
         </div>
