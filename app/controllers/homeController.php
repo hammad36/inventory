@@ -6,8 +6,13 @@ use inventory\controllers\abstractController;
 
 class homeController extends abstractController
 {
-    public function defaultAction()
+    public function defaultAction(): void
     {
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 }

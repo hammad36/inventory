@@ -65,4 +65,10 @@ class alertHandler
         header("Location: $location");
         exit();
     }
+    public function redirectOnly($path)
+    {
+        session_write_close();
+        header("Location: $path");
+        exit();
+    }
 }
