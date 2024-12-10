@@ -109,7 +109,6 @@ class IndexController extends AbstractController
             'email' => filter_var($data['email'], FILTER_VALIDATE_EMAIL),
             'password' => $data['password'],
             'confirm_password' => $data['confirm_password'],
-            'phone' => preg_replace('/\D/', '', $data['phone']),
             'date_of_birth' => $data['date_of_birth'],
             'gender' => $data['gender'],
         ];
@@ -139,11 +138,9 @@ class IndexController extends AbstractController
         $user->setLastName($inputs['last_name']);
         $user->setEmail($inputs['email']);
         $user->setPassword($inputs['password']);
-        $user->setPhone($inputs['phone']);
         $user->setDateOfBirth($inputs['date_of_birth']);
         $user->setGender($inputs['gender']);
         $user->setRole('user');
-        $user->setStatus(1);
     }
 
     private function generateCsrfToken(): void
