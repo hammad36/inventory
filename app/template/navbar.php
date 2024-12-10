@@ -49,8 +49,27 @@
                         <div id="user-menu"
                             class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
                             <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
-                            <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                            <a href="/logout" onclick="return confirm('Are you sure you want to sign out?');" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                            <a href="/setting" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                            <a href="#" onclick="showLogoutAlert(event)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Sign out
+                            </a>
+
+                            <!-- Logout Confirmation Modal -->
+                            <div id="logoutModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                                <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+                                    <h2 class="text-lg font-bold text-gray-800 mb-4">Confirm Logout</h2>
+                                    <p class="text-gray-600 mb-6">Are you sure you want to sign out?</p>
+                                    <div class="flex justify-end space-x-4">
+                                        <button onclick="closeLogoutModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
+                                            Cancel
+                                        </button>
+                                        <a href="/logout" class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700">
+                                            Sign out
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 <?php else: ?>

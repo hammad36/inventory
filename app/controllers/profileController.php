@@ -4,7 +4,7 @@ namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
 
-class yourProfileController extends abstractController
+class profileController extends abstractController
 {
     public function defaultAction()
     {

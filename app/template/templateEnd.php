@@ -45,6 +45,16 @@
         const element = document.getElementById(id);
         element.classList.toggle('hidden');
     }
+
+
+    function showLogoutAlert(event) {
+        event.preventDefault();
+        document.getElementById('logoutModal').classList.remove('hidden');
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').classList.add('hidden');
+    }
 </script>
 </body>
 

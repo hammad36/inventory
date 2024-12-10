@@ -138,9 +138,14 @@ class IndexController extends AbstractController
         $_SESSION['user'] = [
             'id' => $user->getUserID(),
             'name' => "{$user->getFirstName()} {$user->getLastName()}",
-            'role' => $user->getRole()
+            'email' => $user->getEmail(),
+            'date_of_birth' => $user->getDateOfBirth(),
+            'gender' => $user->getGender(),
+            'role' => $user->getRole(),
+            'created_at' => $user->getCreatedAt()
         ];
     }
+
 
     private function redirectWithAlert(string $alertType, string $url, string $message): void
     {
