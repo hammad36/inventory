@@ -50,7 +50,12 @@ class productsController extends abstractController
             'categories' => $categories,
             'category' => $category,
         ];
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
     public function addAction()
@@ -109,7 +114,12 @@ class productsController extends abstractController
         $currentCategoryId = $this->filterInt($_GET['category_id'] ?? null);
         $this->_data['currentCategoryId'] = $currentCategoryId;
 
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
     public function editAction()
@@ -170,7 +180,12 @@ class productsController extends abstractController
             'currentCategoryId' => $currentCategoryId,
         ];
 
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 
 

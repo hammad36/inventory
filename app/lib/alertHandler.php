@@ -8,10 +8,11 @@ class alertHandler
 
     // Tailwind alert styles mapped to alert types
     private $alertTypes = [
-        'add' => 'bg-green-200  text-green-900',
-        'remove' => 'bg-red-200 text-red-900',
-        'edit' => 'bg-blue-200  text-blue-900',
-        'error' => 'bg-yellow-200  text-yellow-900'
+        'add'        =>  'bg-green-200  text-green-900',
+        'success'    =>  'bg-green-200  text-green-900',
+        'remove'     =>  'bg-red-200 text-red-900',
+        'edit'       =>  'bg-blue-200  text-blue-900',
+        'error'      =>  'bg-yellow-200  text-yellow-900'
     ];
 
     private function __construct() {}
@@ -62,6 +63,12 @@ class alertHandler
         session_write_close();
         $location = "{$path}?msg=" . urlencode($message) . "&type=" . urlencode($type);
         header("Location: $location");
+        exit();
+    }
+    public function redirectOnly($path)
+    {
+        session_write_close();
+        header("Location: $path");
         exit();
     }
 }

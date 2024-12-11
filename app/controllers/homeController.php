@@ -3,15 +3,10 @@
 namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
-use inventory\lib\InputFilter;
-use inventory\lib\alertHandler;
-use inventory\models\productsModel;
-use inventory\models\productPhotosModel;
-use inventory\models\categoriesModel;
 
-class adjustmentsController extends abstractController
+class homeController extends abstractController
 {
-    public function defaultAction()
+    public function defaultAction(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

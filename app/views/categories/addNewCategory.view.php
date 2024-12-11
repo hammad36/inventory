@@ -1,4 +1,4 @@
-<section class="bg-gradient-to-br from-blue-200 via-white to-blue-100 min-h-screen flex items-center justify-center relative">
+<section class="min-h-[calc(101.1vh-8rem)] bg-gradient-to-br from-blue-200 via-white to-blue-100 min-h-screen flex items-center justify-center relative">
     <!-- Back Button -->
     <div class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30">
         <a href="/categories/manageCategories"

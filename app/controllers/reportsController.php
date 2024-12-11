@@ -4,10 +4,15 @@ namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
 
-class reports extends abstractController
+class reportsController extends abstractController
 {
     public function defaultAction()
     {
-        $this->_view();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->_view([
+            'user' => $_SESSION['user'] ?? null
+        ]);
     }
 }

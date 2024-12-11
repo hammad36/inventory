@@ -1,4 +1,4 @@
-<div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+<div class="min-h-[calc(101.1vh-8rem)] max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Add New Product</h2>
     <form method="POST" action="/categories/addProduct" enctype="multipart/form-data">
         <!-- Product Name -->

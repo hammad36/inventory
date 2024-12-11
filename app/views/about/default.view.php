@@ -88,23 +88,38 @@
             <p class="mt-4 text-lg text-gray-600 ">
                 Have questions or need personalized assistance? Our team is here to help. Connect with us today!
             </p>
+            <!-- Alert Handler -->
+            <?php
+
+            use inventory\lib\alertHandler;
+
+            alertHandler::getInstance()->handleAlert();
+            ?>
         </div>
-        <form class="max-w-lg mx-auto space-y-6">
+        <form action="/about" method="POST" class="max-w-lg mx-auto space-y-6">
             <div>
                 <label for="name" class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Your Name</label>
-                <input type="text" id="name" class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white" placeholder="Enter your name" required>
+                <input type="text" id="name" name="name"
+                    class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
+                    placeholder="Enter your name" required>
             </div>
             <div>
                 <label for="email" class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Your Email</label>
-                <input type="email" id="email" class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white" placeholder="Enter your email" required>
+                <input type="email" id="email" name="email"
+                    class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
+                    placeholder="Enter your email" required>
             </div>
             <div>
-                <label for="message" class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Your Message</label>
-                <textarea id="message" rows="4" class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white" placeholder="Write your message" required></textarea>
+                <label for="message_text" class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Your Message</label>
+                <textarea id="message_text" name="message_text" rows="4"
+                    class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white"
+                    placeholder="Write your message" required></textarea>
             </div>
-            <button type="submit" class="w-full py-3 px-6 bg-indigo-600 rounded-lg font-medium text-white hover:bg-indigo-700">
+            <button type="submit"
+                class="w-full py-3 px-6 bg-indigo-600 rounded-lg font-medium text-white hover:bg-indigo-700">
                 Send Message
             </button>
         </form>
+
     </div>
 </section>

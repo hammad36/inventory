@@ -1,17 +1,20 @@
-<section class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28">
+<section class="min-h-[calc(101.1vh-8rem)] relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
 
     <!-- Settings Icon -->
-    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
-        <!-- Manage Products Button -->
-        <a href="/categories/addNewProduct" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            <!-- Manage Icon -->
-            <svg class="w-5 h-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Add New Product
-        </a>
-    </div>
+    <?php if ($_SESSION['user']['role'] === 'admin'): ?>
+        <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
+            <!-- Manage Products Button -->
+            <a href="/categories/addNewProduct" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <!-- Manage Icon -->
+                <svg class="w-5 h-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Add New Product
+            </a>
+        </div>
+    <?php endif ?>
+
     <div class="absolute top-4 left-4 sm:top-6 sm:left-6 z-30 flex space-x-4">
         <!-- Back Button -->
         <a href="/categories" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
