@@ -1,5 +1,5 @@
 <section
-    class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-20 sm:pb-16 sm:pt-32 lg:pb-24 xl:pb-32 xl:pt-22">
+    class="relative overflow-hidden  bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-20 sm:pb-16 sm:pt-32 lg:pb-24 xl:pb-32 xl:pt-22">
     <!-- Background Animation -->
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50 animate-gradient"></div>
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
@@ -69,3 +69,5 @@
         </div>
     </div>
 </section>
+
+</main>
