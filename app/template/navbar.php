@@ -48,7 +48,7 @@
                         </button>
                         <div id="user-menu"
                             class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
-                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-md">Your Profile</a>
                             <a href="/setting" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                             <a href="#" onclick="showLogoutAlert(event)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 Sign out

@@ -5,23 +5,26 @@
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
 
         <!-- Personalized Greeting -->
-        <div class="my-8 min-w-2xl text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl animate-fade-up">
-                Hello, <span class="text-blue-600"> <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Guest') ?> ! </span>
+        <div class="my-8 mx-auto max-w-4xl px-4 text-center">
+            <h1 class="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-800 animate-fade-up">
+                Hello,
+                <span class="text-blue-600">
+                    <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Guest') ?>!
+                </span>
             </h1>
         </div>
 
-        <div class="mx-auto min-w-2xl text-center">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl animate-fade-up">
+        <div class="mx-auto max-w-4xl px-4 py-10 text-center">
+            <h1 class="text-2xl py-5 sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-blue-600 animate-fade-up">
                 Smart Inventory Management Made Easy
-                <span class="text-gray-900">— Control at Your Fingertips</span>
+                <span class="text-gray-900 block sm:inline">— Control at Your Fingertips</span>
             </h1>
-            <p class="mt-6 text-lg leading-8 text-gray-700 animate-fade-up animation-delay-200">
+            <p class="mt-4 py-5 text-base sm:text-lg md:text-xl leading-7 sm:leading-8 text-gray-700 animate-fade-up animation-delay-200">
                 Discover how our system streamlines your inventory process with powerful tools, intuitive design,
                 and real-time analytics tailored for your success.
             </p>
-
         </div>
+
 
         <!-- Feature Cards with Animation -->
         <div class="relative mx-auto mt-12 max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
