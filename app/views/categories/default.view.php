@@ -1,21 +1,21 @@
-<section class="relative overflow-hidden min-h-[calc(101.1vh-8rem)] bg-gradient-to-b from-blue-50 via-transparent to-transparent
-    pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28 ">
+<section class="relative overflow-hidden min-h-[calc(101.1vh-8rem)] bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12  sm:pb-16 lg:pb-24 xl:pb-28">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
 
     <!-- Manage Products Button -->
-    <?php if ($_SESSION['user']['role'] === 'admin'): ?>
-        <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 flex space-x-4">
+    <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+        <div class="absolute top-2 right-2 sm:top-6 sm:right-6 z-30 flex space-x-4">
             <a href="/categories/manageCategories"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                 Manage Categories
             </a>
         </div>
-    <?php endif ?>
+    <?php endif; ?>
+
 
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
 
         <div class="text-center my-10">
-            <h1 class="text-4xl font-extrabold tracking-tight text-blue-600 sm:text-6xl">
+            <h1 class="text-4xl font-extrabold tracking-tight text-blue-700 sm:text-6xl">
                 Browse Categories
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-700">
