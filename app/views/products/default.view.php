@@ -1,5 +1,4 @@
-<main class="flex-grow container mx-auto py-6 min-h-[calc(101.1vh-8rem)]">
-    <section class="relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28">
+    <section class="min-h-[calc(101.1vh-8rem)] relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 pt-12 sm:pb-16 sm:pt-20 lg:pb-24 xl:pb-28">
         <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
 
         <!-- Add Product Button -->
@@ -98,4 +97,3 @@
             </div>
         </div>
     </section>
-</main>
