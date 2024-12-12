@@ -50,26 +50,51 @@
 
         <!-- Statistics and Chart Section -->
         <div class="mt-16 text-center">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">Your Business at a Glance</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                InvenHammad Statistics at a Glance
+            </h2>
+
+            <p class="text-lg text-gray-600 mb-10">
+                A comprehensive overview of InvenHammad system to keep you informed and empowered.
+            </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-up">
+                <!-- Categories -->
                 <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">500+</p>
-                    <p class="text-gray-700">Products Managed</p>
+                    <p class="text-2xl font-bold text-blue-600">
+                        <?= htmlspecialchars($categoryNumber ?? 0, ENT_QUOTES, 'UTF-8') ?>+
+                    </p>
+                    <p class="text-gray-700">
+                        Active Categories
+                    </p>
                 </div>
+                <!-- Products -->
                 <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">1,200+</p>
-                    <p class="text-gray-700">Orders Processed</p>
+                    <p class="text-2xl font-bold text-blue-600">
+                        <?= htmlspecialchars($productNumber ?? 0, ENT_QUOTES, 'UTF-8') ?>+
+                    </p>
+                    <p class="text-gray-700">
+                        Available Products
+                    </p>
                 </div>
+                <!-- Users -->
                 <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
-                    <p class="text-2xl font-bold text-blue-600">300+</p>
-                    <p class="text-gray-700">Active Clients</p>
+                    <p class="text-2xl font-bold text-blue-600">
+                        <?= htmlspecialchars($usersNumber ?? 0, ENT_QUOTES, 'UTF-8') ?>+
+                    </p>
+                    <p class="text-gray-700">
+                        Registered Users
+                    </p>
                 </div>
+                <!-- Accuracy Rate -->
                 <div class="p-6 bg-white shadow rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-up animation-delay-400">
                     <p class="text-2xl font-bold text-blue-600">99%</p>
-                    <p class="text-gray-700">Accuracy Rate</p>
+                    <p class="text-gray-700">
+                        Inventory Accuracy Rate
+                    </p>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 

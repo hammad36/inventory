@@ -11,8 +11,6 @@ class settingController extends abstractController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        $this->_view([
-            'user' => $_SESSION['user'] ?? null
-        ]);
+        $this->_view();
     }
 }

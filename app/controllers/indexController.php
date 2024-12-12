@@ -25,9 +25,7 @@ class IndexController extends AbstractController
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-            $this->_view([
-                'user' => $_SESSION['user'] ?? null
-            ]);
+            $this->_view();
         }
     }
 
@@ -59,9 +57,7 @@ class IndexController extends AbstractController
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-            $this->_view([
-                'user' => $_SESSION['user'] ?? null
-            ]);
+            $this->_view();
         }
     }
 
