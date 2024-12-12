@@ -15,7 +15,7 @@
     <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
         <div class="absolute top-2 right-2 sm:top-6 sm:right-6 z-30 flex space-x-4">
             <!-- Manage Products Button -->
-            <a href="/products?category_id=<?php echo $category->getCategoryId(); ?>"
+            <a href="/products?category_id=<?php echo htmlspecialchars($category->getCategoryId()); ?>"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                 Manage Products
             </a>
@@ -34,6 +34,13 @@
         </div>
 
 
+        <?php
+
+        use inventory\lib\alertHandler;
+
+        $alertHandler = alertHandler::getInstance();
+        $alertHandler->handleAlert();
+        ?>
         <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php
             if (!empty($products)) {
@@ -64,7 +71,7 @@
                         <span class="block text-sm font-medium text-gray-700">Price: $' . number_format($product['unit_price'], 2) . '</span>
                         <span class="block text-sm font-medium text-green-600">Quantity: ' . htmlspecialchars($product['quantity']) . '</span>
                     </div>
-                    <form action="/adjust-stock" method="POST" class="mt-4">
+                    <form action="/categories/category/' . htmlspecialchars($category->getCategoryId()) . '" method="POST" class="mt-4">
                         <input type="hidden" name="product_id" value="' . htmlspecialchars($product['product_id']) . '">
                         <div class="flex items-center space-x-4">
                             <!-- Add Option -->
