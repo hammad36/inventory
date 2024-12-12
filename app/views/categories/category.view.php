@@ -33,6 +33,7 @@
             </p>
         </div>
 
+
         <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <?php
             if (!empty($products)) {
@@ -41,39 +42,61 @@
                     $photoUrls = explode(',', $product['photo_urls']);
 
                     echo '
-                    <div class="relative block rounded-2xl border border-gray-200 shadow-lg bg-white p-6 hover:shadow-xl hover:scale-105 transition-transform duration-300 h-[550px]">
-                        <div class="relative group h-full flex flex-col">
-                            <div class="relative overflow-hidden rounded-lg h-[300px]">
-                                <img class="rounded-lg w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-                                    src="' . htmlspecialchars($photoUrls[0]) . '"
-                                    alt="' . htmlspecialchars($product['name']) . '">
-                                
-                                <div class="absolute inset-0 grid grid-cols-1 gap-1 transition-opacity duration-300 opacity-0 group-hover:opacity-100">';
+            <div class="relative block rounded-2xl border border-gray-200 shadow-lg bg-white p-6 hover:shadow-xl hover:scale-105 transition-transform duration-300 h-[600px]">
+                <div class="relative group h-full flex flex-col">
+                    <div class="relative overflow-hidden rounded-lg h-[300px]">
+                        <img class="rounded-lg w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                            src="' . htmlspecialchars($photoUrls[0]) . '"
+                            alt="' . htmlspecialchars($product['name']) . '">
+                        
+                        <div class="absolute inset-0 grid grid-cols-1 gap-1 transition-opacity duration-300 opacity-0 group-hover:opacity-100">';
                     foreach (array_slice($photoUrls, 1) as $url) {
                         echo '<img class="rounded-lg w-full h-full object-cover"
-                                        src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($product['name']) . '">';
+                                src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($product['name']) . '">';
                     }
                     echo '</div>
-                            </div>
-                            <div class="mt-4 flex-1">
-                                <h3 class="text-lg font-semibold text-gray-800">' . htmlspecialchars($product['name']) . '</h3>
-                                <p class="text-sm text-gray-600 mt-2 line-clamp-3">' . htmlspecialchars($product['description']) . '</p>
-                            </div>
-                            <div class="mt-4">
-                                <span class="block text-sm font-medium text-gray-700">Price: $' . number_format($product['unit_price'], 2) . '</span>
-                                <span class="block text-sm font-medium text-gray-700">Quantity: ' . htmlspecialchars($product['quantity']) . '</span>
-                            </div>
-                            <a href="/product/' . htmlspecialchars($product['product_id']) . '" 
-                                class="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                View Product
-                            </a>
+                    </div>
+                    <div class="mt-4 flex-1">
+                        <h3 class="text-lg font-semibold text-gray-800">' . htmlspecialchars($product['name']) . '</h3>
+                        <p class="text-sm text-gray-600 mt-2 line-clamp-3">' . htmlspecialchars($product['description']) . '</p>
+                    </div>
+                    <div class="mt-4">
+                        <span class="block text-sm font-medium text-gray-700">Price: $' . number_format($product['unit_price'], 2) . '</span>
+                        <span class="block text-sm font-medium text-green-600">Quantity: ' . htmlspecialchars($product['quantity']) . '</span>
+                    </div>
+                    <form action="/adjust-stock" method="POST" class="mt-4">
+                        <input type="hidden" name="product_id" value="' . htmlspecialchars($product['product_id']) . '">
+                        <div class="flex items-center space-x-4">
+                            <!-- Add Option -->
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="adjustment_type" value="addition" required class="form-radio text-blue-600 peer">
+                                <span class="ml-2 text-gray-600 peer-checked:text-blue-600 peer-checked:font-medium">Add</span>
+                            </label>
+                            <!-- Reduce Option -->
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="adjustment_type" value="reduction" required class="form-radio text-red-600 peer">
+                                <span class="ml-2 text-gray-600 peer-checked:text-red-600 peer-checked:font-medium">Reduce</span>
+                            </label>
                         </div>
-                    </div>';
+                        <div class="mt-3">
+                            <input type="number" name="quantity" placeholder="Enter quantity" required
+                                class="w-full border border-gray-300 rounded-lg p-2 text-sm shadow-sm ">
+                        </div>
+                        <button type="submit" 
+                            class="mt-4 inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+            </div>';
                 }
             } else {
                 echo '<p class="col-span-3 text-center text-gray-500">No products found in this category.</p>';
             }
             ?>
         </div>
+
+
+
     </div>
 </section>
