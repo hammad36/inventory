@@ -13,23 +13,42 @@
 
             <!-- Logo -->
             <div class="flex flex-1 items-center justify-center sm:justify-start">
-                <img class="h-10 w-auto" src="../../images/logo.png" alt="Company Logo">
-                <a href="/home" class="text-white font-semibold text-lg ml-2">InvenHammad</a>
+                <div class="flex items-center">
+                    <img class="h-12 w-auto transition-transform hover:rotate-6" src="../../images/logo.png" alt="Company Logo">
+                    <a href="/home" class="text-white font-bold text-xl ml-3 tracking-wider hover:text-blue-300 transition-colors duration-300">
+                        InvenHammad
+                    </a>
+                </div>
 
                 <!-- Desktop Navigation -->
                 <div class="hidden sm:flex sm:ml-6 space-x-4 ml-10">
-                    <a href="/home" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                    <a href="/categories" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Categories</a>
-                    <a href="/adjustments" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Stock Adjustments</a>
-                    <a href="/reports" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Reports</a>
-                    <a href="/about" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About Us</a>
+                    <a href="/home" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                        <span class="relative z-10">Home</span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    </a>
+                    <a href="/categories" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                        <span class="relative z-10">Categories</span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    </a>
+                    <a href="stockAdjustments" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                        <span class="relative z-10">Stock Adjustments</span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    </a>
+                    <a href="/reports" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                        <span class="relative z-10">Reports</span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    </a>
+                    <a href="/about" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                        <span class="relative z-10">About Us</span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    </a>
                 </div>
             </div>
 
             <!-- Right Section -->
             <div class="flex items-center space-x-4">
                 <!-- Search -->
-                <button id="search-button" class="p-2 bg-gray-800 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                <button id="search-button" class="p-2 bg-transparent rounded-full text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
                     onclick="toggleSearchBar()">
                     <span class="sr-only">Search</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -41,7 +60,7 @@
                 <!-- User Menu -->
                 <?php if (isset($_SESSION['user'])): ?>
                     <div class="relative ml-3">
-                        <button id="user-menu-button" class="flex bg-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        <button id="user-menu-button" class="p-2 bg-transparent rounded-full text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
                             onclick="toggleDropdown('user-menu')">
                             <span class="sr-only">Open user menu</span>
                             <img class="h-10 w-10 rounded-full" src="../../images/avatar322.jpg" alt="User avatar">
@@ -84,7 +103,7 @@
         <div class="space-y-1 px-2 pt-2 pb-3">
             <a href="/home" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Home</a>
             <a href="/categories" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Categories</a>
-            <a href="/adjustments" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Stock Adjustments</a>
+            <a href="/stockAdjustments" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Stock Adjustments</a>
             <a href="/reports" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Reports</a>
             <a href="/about" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">About Us</a>
         </div>
