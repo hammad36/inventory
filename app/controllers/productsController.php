@@ -102,10 +102,10 @@ class productsController extends abstractController
 
                     $this->redirectWithAlert('add', '/products?category_id=' . "$categoryId", "Product added successfully.");
                 } else {
-                    $this->redirectWithAlert('error', '', "Failed to add product.");
+                    $this->redirectWithAlert('error', '/products?category_id=' . "$categoryId", "Failed to add product.");
                 }
             } else {
-                $this->redirectWithAlert('error', '', "Invalid input. Please fill in all required fields.");
+                $this->redirectWithAlert('error', '/products?category_id=' . "$categoryId", "Invalid input. Please fill in all required fields.");
             }
         }
 
@@ -161,10 +161,10 @@ class productsController extends abstractController
 
                     $this->redirectWithAlert('success', '/products?category_id=' . $currentCategoryId, "Product updated successfully.");
                 } else {
-                    $this->redirectWithAlert('error', '', "Failed to update product.");
+                    $this->redirectWithAlert('error', '/products?category_id=' . $currentCategoryId, "Failed to update product.");
                 }
             } else {
-                $this->redirectWithAlert('error', '', "Invalid input. Please fill in all required fields.");
+                $this->redirectWithAlert('error', '/products?category_id=' . $currentCategoryId, "Invalid input. Please fill in all required fields.");
             }
         }
 
@@ -217,11 +217,11 @@ class productsController extends abstractController
 
         $categoryId = $product->getCategoryID(); // Retrieve the category ID for redirection.
 
+        $redirectUrl = '/products' . ($categoryId ? '?category_id=' . $categoryId : '');
         if ($product->deleteWithPhotos()) {
-            $redirectUrl = '/products' . ($categoryId ? '?category_id=' . $categoryId : '');
             $this->redirectWithAlert('remove', $redirectUrl, 'Product and associated photos deleted successfully.');
         } else {
-            $this->redirectWithAlert('error', '', 'Failed to delete product or associated photos.');
+            $this->redirectWithAlert('error',  $redirectUrl, 'Failed to delete product or associated photos.');
         }
     }
 
