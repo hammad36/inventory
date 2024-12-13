@@ -145,7 +145,7 @@ class IndexController extends AbstractController
 
     private function redirectWithAlert(string $alertType, string $url, string $message): void
     {
-        $this->alertHandler->redirectWithMessage($url, $alertType, $message);
+        $this->alertHandler->redirectWithAlert($url, $alertType, $message);
     }
 
 

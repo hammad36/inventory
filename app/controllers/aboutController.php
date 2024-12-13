@@ -65,6 +65,6 @@ class aboutController extends abstractController
 
     private function redirectWithAlert(string $alertType, string $url, string $message)
     {
-        $this->alertHandler->redirectWithMessage($url, $alertType, $message);
+        $this->alertHandler->redirectWithAlert($url, $alertType, $message);
     }
 }
