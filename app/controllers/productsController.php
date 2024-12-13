@@ -69,7 +69,7 @@ class productsController extends abstractController
             $categoryId = $this->filterInt($_POST['category_id'] ?? $_GET['category_id'] ?? null);
 
             if (!$categoryId) {
-                $this->redirectWithAlert('error', '/categories', "No category selected.");
+                $this->redirectWithAlert('error', '', "No category selected.");
                 return;
             }
 
@@ -100,12 +100,12 @@ class productsController extends abstractController
                         productPhotosModel::addPhotosToProduct($productId, $photoUrls);
                     }
 
-                    $this->redirectWithAlert('success', '/products/manageProducts', "Product added successfully.");
+                    $this->redirectWithAlert('add', '/products?category_id=' . "$categoryId", "Product added successfully.");
                 } else {
-                    $this->redirectWithAlert('error', '/products/add', "Failed to add product.");
+                    $this->redirectWithAlert('error', '', "Failed to add product.");
                 }
             } else {
-                $this->redirectWithAlert('error', '/products/add', "Invalid input. Please fill in all required fields.");
+                $this->redirectWithAlert('error', '', "Invalid input. Please fill in all required fields.");
             }
         }
 
@@ -123,14 +123,14 @@ class productsController extends abstractController
         $productId = $this->filterInt($_GET['id'] ?? null);
 
         if (!$productId) {
-            $this->redirectWithAlert('error', '/products', "Invalid product ID.");
+            $this->redirectWithAlert('error', '', "Invalid product ID.");
             return;
         }
 
         $product = productsModel::getByPK($productId);
 
         if (!$product) {
-            $this->redirectWithAlert('error', '/products', "Product not found.");
+            $this->redirectWithAlert('error', '', "Product not found.");
             return;
         }
 
@@ -153,23 +153,21 @@ class productsController extends abstractController
                 $product->setCategoryID($currentCategoryId);
 
                 if ($product->save()) {
-                    // Update photos
-                    $newPhotos = array_filter([$_POST['photo_url1'], $_POST['photo_url2']]); // Add more inputs if needed
+                    $newPhotos = array_filter([$_POST['photo_url1'], $_POST['photo_url2']]);
                     productPhotosModel::handlePhotoTransaction(function () use ($productId, $newPhotos) {
                         productPhotosModel::deletePhotosByProductId($productId);
                         return productPhotosModel::addPhotosToProduct($productId, $newPhotos);
                     });
 
-                    $this->redirectWithAlert('success', "/products?category_id={$currentCategoryId}", "Product updated successfully.");
+                    $this->redirectWithAlert('success', '/products?category_id=' . $currentCategoryId, "Product updated successfully.");
                 } else {
-                    $this->redirectWithAlert('error', "/products/edit?id={$productId}", "Failed to update product.");
+                    $this->redirectWithAlert('error', '', "Failed to update product.");
                 }
             } else {
-                $this->redirectWithAlert('error', "/products/edit?id={$productId}", "Invalid input. Please fill in all required fields.");
+                $this->redirectWithAlert('error', '', "Invalid input. Please fill in all required fields.");
             }
         }
 
-        // Pass data to view
         $this->_data = [
             'product' => $product,
             'photos' => $productPhotos,
@@ -181,6 +179,7 @@ class productsController extends abstractController
         }
         $this->_view();
     }
+
 
 
     private function updatePhotos($productId)
@@ -202,32 +201,30 @@ class productsController extends abstractController
 
     public function deleteAction()
     {
-        // Step 1: Get the product ID from the request
         $productId = $this->filterInt($_GET['id'] ?? null);
 
-        // Step 2: Validate the product ID
         if (!$productId) {
-            $this->redirectWithAlert('error', '/products', 'Invalid product ID.');
+            $this->redirectWithAlert('error', '', 'Invalid product ID.');
             return;
         }
 
-        // Step 3: Find the product
         $product = productsModel::getByPK($productId);
 
         if (!$product) {
-            $this->redirectWithAlert('error', '/products', 'Product not found.');
+            $this->redirectWithAlert('error', '', 'Product not found.');
             return;
         }
 
-        // Step 4: Attempt to delete the product and its photos
+        $categoryId = $product->getCategoryID(); // Retrieve the category ID for redirection.
+
         if ($product->deleteWithPhotos()) {
-            // Redirect with success message
-            $this->redirectWithAlert('success', '/products', 'Product and associated photos deleted successfully.');
+            $redirectUrl = '/products' . ($categoryId ? '?category_id=' . $categoryId : '');
+            $this->redirectWithAlert('remove', $redirectUrl, 'Product and associated photos deleted successfully.');
         } else {
-            // Redirect with error message
-            $this->redirectWithAlert('error', '/products', 'Failed to delete product or associated photos.');
+            $this->redirectWithAlert('error', '', 'Failed to delete product or associated photos.');
         }
     }
+
 
 
     private function generateSku($categoryId)
@@ -239,6 +236,6 @@ class productsController extends abstractController
     // Redirect with alert
     private function redirectWithAlert(string $alertType, string $url, string $message)
     {
-        $this->alertHandler->redirectWithMessage($url, $alertType, $message);
+        $this->alertHandler->redirectWithAlert($url, $alertType, $message);
     }
 }

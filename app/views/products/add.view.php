@@ -33,7 +33,7 @@ endif
         <h2 class="text-3xl font-bold text-center text-gray-800">Add New Product</h2>
         <p class="text-sm text-center text-gray-600 mt-2">Fill out the form below to add a new product to your inventory.</p>
 
-        <form action="/products/add" method="POST" class="space-y-6 mt-6">
+        <form action="" method="POST" enctype="multipart/form-data" class="space-y-6 mt-6">
             <!-- Product Name -->
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>

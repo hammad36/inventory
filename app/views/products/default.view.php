@@ -46,9 +46,9 @@ endif
 
         use inventory\lib\alertHandler;
 
-        alertHandler::getInstance()->handleAlert();
+        $alertHandler = alertHandler::getInstance();
+        $alertHandler->handleAlert();
         ?>
-
         <!-- Products Table -->
         <div class="mt-12 overflow-x-auto bg-white rounded-lg shadow-lg">
             <table class="min-w-full border-collapse divide-y divide-gray-200 text-sm">

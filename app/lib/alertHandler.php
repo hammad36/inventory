@@ -6,16 +6,27 @@ class alertHandler
 {
     private static $instance = null;
 
-    // Tailwind alert styles mapped to alert types
+    // Expanded alert types with more descriptive styles
     private $alertTypes = [
-        'add'        =>  'bg-green-200  text-green-900',
-        'success'    =>  'bg-green-200  text-green-900',
-        'remove'     =>  'bg-red-200 text-red-900',
-        'edit'       =>  'bg-blue-200  text-blue-900',
-        'error'      =>  'bg-yellow-200  text-yellow-900'
+        'add'        => ['class' => 'bg-green-100 border-green-400 text-green-900', 'icon' => '✅'],
+        'success'    => ['class' => 'bg-green-100 border-green-400 text-green-900', 'icon' => '✅'],
+        'remove'     => ['class' => 'bg-red-100 border-red-400 text-red-900', 'icon' => '❌'],
+        'edit'       => ['class' => 'bg-blue-100 border-blue-400 text-blue-900', 'icon' => '✏️'],
+        'error'      => ['class' => 'bg-yellow-100 border-yellow-400 text-yellow-900', 'icon' => '⚠️'],
+        'warning'    => ['class' => 'bg-orange-100 border-orange-400 text-orange-900', 'icon' => '🚨']
     ];
 
-    private function __construct() {}
+    private function __construct()
+    {
+        $this->initSession();
+    }
+
+    private function initSession()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
 
     public static function getInstance()
     {
@@ -30,15 +41,44 @@ class alertHandler
         return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
 
-    public function displayAlert($type, $message)
+    public function setAlert($type, $message)
     {
-        if (!isset($this->alertTypes[$type])) return;
-        $alertClass = $this->alertTypes[$type];
-        $message = $this->sanitize($message);
+        $this->initSession();
 
-        echo <<<HTML
-        <div class="alert max-w-4xl mx-auto mt-4 flex items-start p-6 rounded-lg shadow-xl shadow-gray-300 hover:shadow-2xl hover:shadow-gray-400 
-        transition-shadow duration-300 border-gradient-to-r from-blue-400 to-purple-500 $alertClass" role="alert">
+        // Validate alert type
+        if (!isset($this->alertTypes[$type])) {
+            $type = 'error'; // Default to error if type is invalid
+        }
+
+        $_SESSION['alert'] = [
+            'type' => $type,
+            'message' => $message,
+            'timestamp' => time()
+        ];
+    }
+
+    public function displayAlert()
+    {
+        $this->initSession();
+
+        if (isset($_SESSION['alert'])) {
+            $alert = $_SESSION['alert'];
+            $type = $alert['type'];
+            $message = $this->sanitize($alert['message']);
+            $alertConfig = $this->alertTypes[$type];
+
+            echo $this->renderAlertHTML($alertConfig['class'], $alertConfig['icon'], $message);
+
+            // Clear the alert after displaying
+            unset($_SESSION['alert']);
+        }
+    }
+
+    private function renderAlertHTML($class, $icon, $message)
+    {
+        return <<<HTML
+        <div class="alert max-w-4xl mx-auto mt-4 flex items-center p-4 rounded-lg shadow-md $class" role="alert">
+            <span class="mr-3 text-2xl">$icon</span>
             <div class="flex-1">
                 $message
             </div>
@@ -53,22 +93,38 @@ class alertHandler
 
     public function handleAlert()
     {
-        if (isset($_GET['msg'], $_GET['type']) && isset($this->alertTypes[$_GET['type']])) {
-            $this->displayAlert($_GET['type'], $_GET['msg']);
-        }
+        $this->displayAlert();
     }
 
-    public function redirectWithMessage($path, $type, $message)
+    public function redirectWithAlert($path, $type, $message)
     {
+        $this->initSession();
+
+        // Set alert in session
+        $this->setAlert($type, $message);
+
+        // Close session and redirect
         session_write_close();
-        $location = "{$path}?msg=" . urlencode($message) . "&type=" . urlencode($type);
-        header("Location: $location");
+        header("Location: $path");
         exit();
     }
+
     public function redirectOnly($path)
     {
         session_write_close();
         header("Location: $path");
         exit();
+    }
+
+    // New method to check if an alert exists
+    public function hasAlert()
+    {
+        return isset($_SESSION['alert']);
+    }
+
+    // New method to clear alerts manually if needed
+    public function clearAlert()
+    {
+        unset($_SESSION['alert']);
     }
 }

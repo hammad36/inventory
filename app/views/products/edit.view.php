@@ -33,7 +33,7 @@ endif
         <h2 class="text-3xl font-bold text-center text-gray-800">Edit Product</h2>
         <p class="text-sm text-center text-gray-600 mt-2">Update the product details below.</p>
 
-        <form action="/products/edit?id=<?= htmlspecialchars($product->getProductID() ?? '') ?>&category_id=<?= htmlspecialchars($currentCategoryId) ?>" method="POST" class="space-y-6 mt-6">
+        <form action="" method="POST" class="space-y-6 mt-6">
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
                 <input type="text" name="name" id="name" value="<?= htmlspecialchars($product->getName() ?? 'N/A')  ?>" required
