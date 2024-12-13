@@ -104,6 +104,10 @@ class productsModel extends abstractModel
     {
         $this->category_id = $category_id;
     }
+    public function setUpdatedAt($updated_at)
+    {
+        $this->category_id = $updated_at;
+    }
 
     // Method to fetch product with photos
     public static function getProductWithPhotos(int $productId): ?self

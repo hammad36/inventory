@@ -2,6 +2,7 @@
 
 namespace inventory\controllers;
 
+use DateTime;
 use inventory\controllers\abstractController;
 use inventory\lib\InputFilter;
 use inventory\lib\alertHandler;
