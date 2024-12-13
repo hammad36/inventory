@@ -26,6 +26,7 @@ class categoriesController extends abstractController
         $this->renderCategoriesView(categoriesModel::getAll());
     }
 
+
     public function categoryAction($categoryId = null)
     {
         // Fallback to query parameter if not provided dynamically
@@ -44,7 +45,8 @@ class categoriesController extends abstractController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->handleStockAdjustment();
+            // Pass the category ID to the stock adjustment method
+            $this->handleStockAdjustment($categoryId);
         }
 
         $this->_data = [
@@ -58,21 +60,24 @@ class categoriesController extends abstractController
         $this->_view();
     }
 
-    private function handleStockAdjustment()
+    private function handleStockAdjustment($categoryId)
     {
+        // Redirect URL with category ID
+        $redirectUrl = '/categories/category/' . htmlspecialchars($categoryId);
+
         // Validate input fields
         $productId = $this->filterInt($_POST['product_id'] ?? null);
         $adjustmentType = $_POST['adjustment_type'] ?? null;
         $quantity = $this->filterInt($_POST['quantity'] ?? 0);
 
         if (!$productId || !$adjustmentType || $quantity <= 0) {
-            $this->redirectWithAlert('error', '', "Invalid input for stock adjustment.");
+            $this->redirectWithAlert('error', $redirectUrl, "Invalid input for stock adjustment.");
             return;
         }
 
         $product = productsModel::getByPK($productId);
         if (!$product) {
-            $this->redirectWithAlert('error', '', "Product not found.");
+            $this->redirectWithAlert('error', $redirectUrl, "Product not found.");
             return;
         }
 
@@ -82,20 +87,20 @@ class categoriesController extends abstractController
             $successMessage = "Successfully added $quantity to {$product->getName()}";
         } elseif ($adjustmentType === 'reduction') {
             if ($product->getQuantity() < $quantity) {
-                $this->redirectWithAlert('error', '', "Insufficient stock to reduce.");
+                $this->redirectWithAlert('error', $redirectUrl, "Insufficient stock to reduce.");
                 return;
             }
             $product->setQuantity($product->getQuantity() - $quantity);
             $successMessage = "Successfully reduced $quantity from {$product->getName()}";
         } else {
-            $this->redirectWithAlert('error', '', "Invalid adjustment type.");
+            $this->redirectWithAlert('error', $redirectUrl, "Invalid adjustment type.");
             return;
         }
 
         if ($product->save()) {
-            $this->redirectWithAlert('success', '', $successMessage);
+            $this->redirectWithAlert('success', $redirectUrl, $successMessage);
         } else {
-            $this->redirectWithAlert('error', '', "Failed to update stock.");
+            $this->redirectWithAlert('error', $redirectUrl, "Failed to update stock.");
         }
     }
 

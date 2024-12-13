@@ -71,7 +71,7 @@
                         <span class="block text-sm font-medium text-gray-700">Price: $' . number_format($product['unit_price'], 2) . '</span>
                         <span class="block text-sm font-medium text-green-600">Quantity: ' . htmlspecialchars($product['quantity']) . '</span>
                     </div>
-                    <form action="" method="POST" class="mt-4">
+                    <form action="/categories/category/' . htmlspecialchars($category->getCategoryId()) . '" method="POST" class="mt-4">
                         <input type="hidden" name="product_id" value="' . htmlspecialchars($product['product_id']) . '">
                         <div class="flex items-center space-x-4">
                             <!-- Add Option -->
