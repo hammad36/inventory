@@ -171,8 +171,7 @@
                 </form>
 
                 <p class="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
-                    Already have an account? <a href="/index" class="text-blue-600 hover:underline font-medium">Login
-                        here</a>
+                    Already have an account? <a href="/index" class="text-blue-600 hover:underline font-medium">Sign In</a>
                 </p>
             </div>
         </div>

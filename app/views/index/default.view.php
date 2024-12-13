@@ -24,7 +24,7 @@
 
         <!-- Form Container -->
         <div class="w-full max-w-3xl bg-white my-16 rounded-lg p-8 shadow-xl dark:border dark:border-gray-700 sm:max-w-xl xl:p-10 dark:bg-gray-900">
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">Create Your Account</h2>
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">Sign In</h2>
             <p class="text-center text-gray-600 dark:text-gray-400 mb-6">
                 Join us and start managing your inventory effortlessly!
             </p>
