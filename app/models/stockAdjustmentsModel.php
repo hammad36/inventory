@@ -20,7 +20,7 @@ class stockAdjustmentsModel extends AbstractModel
     protected static $tableName = 'stock_adjustments';
     protected static $tableSchema = [
         'product_id'       => self::DATA_TYPE_INT,
-        'change_type'      => self::DATA_TYPE_ENUM,
+        'change_type'      => self::DATA_TYPE_STR,
         'quantity_change'  => self::DATA_TYPE_INT,
         'user_id'          => self::DATA_TYPE_INT,
         'timestamp'        => self::DATA_TYPE_TIMESTAMP,
@@ -36,8 +36,7 @@ class stockAdjustmentsModel extends AbstractModel
     const DATA_TYPE_DATE    = \PDO::PARAM_STR;
     const DATA_TYPE_NULL    = \PDO::PARAM_NULL;
     const DATA_TYPE_ENUM    = 'enum';
-    const DATA_TYPE_TIMESTAMP = 'timestamp';
-
+    const DATA_TYPE_TIMESTAMP = \PDO::PARAM_STR;
     // Setters with validation
     public function setProductId(int $product_id): void
     {
@@ -68,7 +67,7 @@ class stockAdjustmentsModel extends AbstractModel
 
     public function setTimestamp(?string $timestamp = null): void
     {
-        $this->timestamp = $timestamp ? $this->filterDate($timestamp) : date('Y-m-d H:i:s');
+        $this->timestamp = $timestamp ?: date('Y-m-d H:i:s');
     }
 
     // Getters
@@ -110,7 +109,7 @@ class stockAdjustmentsModel extends AbstractModel
 
     public function getTimestamp(): string
     {
-        return $this->timestamp;
+        return $this->timestamp ?? date('Y-m-d H:i:s');
     }
 
     // Utility methods (optional)
@@ -122,5 +121,21 @@ class stockAdjustmentsModel extends AbstractModel
     public function isReduction(): bool
     {
         return $this->change_type === 'reduction';
+    }
+
+    public static function getByCategoryId(int $categoryId): array
+    {
+        $sql = "
+        SELECT sa.*
+        FROM stock_adjustments sa
+        INNER JOIN products p ON sa.product_id = p.product_id
+        WHERE p.category_id = :category_id
+    ";
+
+        $stmt = self::getConnection()->prepare($sql);
+        $stmt->bindValue(':category_id', $categoryId, self::DATA_TYPE_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
     }
 }
