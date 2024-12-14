@@ -138,4 +138,40 @@ class stockAdjustmentsModel extends AbstractModel
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
     }
+
+    public static function getRecentAdjustments(int $limit = 10): array
+    {
+        $sql = "
+        SELECT 
+            sa.adjustment_id,
+            sa.product_id,
+            p.name AS product_name,
+            sa.change_type,
+            sa.quantity_change,
+            sa.user_id,
+            u.full_name AS user_name,
+            sa.timestamp
+        FROM 
+            stock_adjustments sa
+        LEFT JOIN 
+            products p ON sa.product_id = p.product_id
+        LEFT JOIN 
+            users u ON sa.user_id = u.user_id
+        ORDER BY 
+            sa.timestamp DESC
+        LIMIT :limit
+    ";
+
+        try {
+            $stmt = self::getConnection()->prepare($sql);
+            $stmt->bindValue(':limit', $limit, self::DATA_TYPE_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            // Log the error (replace with your actual logging mechanism)
+            error_log('Error fetching recent stock adjustments: ' . $e->getMessage());
+            return [];
+        }
+    }
 }
