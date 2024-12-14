@@ -60,7 +60,7 @@ class productsController extends abstractController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Sanitize and validate input
-            $name = $this->filterString($_POST['name'] ?? '');
+            $product_name = $this->filterString($_POST['product_name'] ?? '');
             $sku = $this->filterString($_POST['sku'] ?? '');
             $description = $this->filterString($_POST['description'] ?? '');
             $quantity = $this->filterInt($_POST['quantity'] ?? 0);
@@ -78,9 +78,9 @@ class productsController extends abstractController
                 $sku = $this->generateSku($categoryId);
             }
 
-            if ($name && $sku && $unitPrice > 0 && $categoryId) {
+            if ($product_name && $sku && $unitPrice > 0 && $categoryId) {
                 $product = new productsModel();
-                $product->setName($name);
+                $product->setName($product_name);
                 $product->setSku($sku);
                 $product->setDescription($description);
                 $product->setQuantity($quantity);
@@ -138,14 +138,14 @@ class productsController extends abstractController
         $productPhotos = productPhotosModel::getPhotosByProductId($productId);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $this->filterString($_POST['name'] ?? '');
+            $product_name = $this->filterString($_POST['product_name'] ?? '');
             $sku = $this->filterString($_POST['sku'] ?? '');
             $description = $this->filterString($_POST['description'] ?? '');
             $quantity = $this->filterInt($_POST['quantity'] ?? 0);
             $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
 
-            if ($name && $sku && $unitPrice > 0) {
-                $product->setName($name);
+            if ($product_name && $sku && $unitPrice > 0) {
+                $product->setName($product_name);
                 $product->setSku($sku);
                 $product->setDescription($description);
                 $product->setQuantity($quantity);

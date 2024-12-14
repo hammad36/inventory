@@ -112,6 +112,11 @@ class usersModel extends abstractModel
     {
         return $this->last_name;
     }
+
+    public function getFullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
     public function getDateOfBirth()
     {
         return $this->date_of_birth;

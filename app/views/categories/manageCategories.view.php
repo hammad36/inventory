@@ -42,7 +42,8 @@ endif
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
         <div class="text-center my-10">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
-                Categories Overview
+                <span class="text-blue-600">
+                    Categories </span> Overview
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-700">
                 Manage and explore your categories with ease.

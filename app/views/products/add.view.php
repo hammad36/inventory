@@ -36,8 +36,8 @@ endif
         <form action="" method="POST" enctype="multipart/form-data" class="space-y-6 mt-6">
             <!-- Product Name -->
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
-                <input type="text" name="name" id="name" required
+                <label for="product_name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                <input type="text" name="product_name" id="product_name" required
                     class="w-full px-4 py-2 mt-1 text-gray-900 bg-gray-50 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 transition duration-300">
             </div>
 

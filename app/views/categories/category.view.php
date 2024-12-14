@@ -26,7 +26,7 @@
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
         <div class="text-center my-10">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
-                <?php echo htmlspecialchars($category->getName()); ?> Products
+                <span class="text-blue-600"><?php echo htmlspecialchars($category->getName()); ?></span> Products
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-700">
                 Explore products under the "<?php echo htmlspecialchars($category->getName()); ?>" category.
@@ -54,17 +54,17 @@
                     <div class="relative overflow-hidden rounded-lg h-[300px]">
                         <img class="rounded-lg w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
                             src="' . htmlspecialchars($photoUrls[0]) . '"
-                            alt="' . htmlspecialchars($product['name']) . '">
+                            alt="' . htmlspecialchars($product['product_name']) . '">
                         
                         <div class="absolute inset-0 grid grid-cols-1 gap-1 transition-opacity duration-300 opacity-0 group-hover:opacity-100">';
                     foreach (array_slice($photoUrls, 1) as $url) {
                         echo '<img class="rounded-lg w-full h-full object-cover"
-                                src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($product['name']) . '">';
+                                src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($product['product_name']) . '">';
                     }
                     echo '</div>
                     </div>
                     <div class="mt-4 flex-1">
-                        <h3 class="text-lg font-semibold text-gray-800">' . htmlspecialchars($product['name']) . '</h3>
+                        <h3 class="text-lg font-semibold text-gray-800">' . htmlspecialchars($product['product_name']) . '</h3>
                         <p class="text-sm text-gray-600 mt-2 line-clamp-3">' . htmlspecialchars($product['description']) . '</p>
                     </div>
                     <div class="mt-4">

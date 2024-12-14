@@ -12,7 +12,7 @@ class productsModel extends abstractModel
 
     // Class properties
     protected $product_id;
-    protected $name;
+    protected $product_name;
     protected $sku;
     protected $description;
     protected $quantity;
@@ -24,7 +24,7 @@ class productsModel extends abstractModel
     // Database schema
     protected static $tableName = 'products';
     protected static $tableSchema = [
-        'name'        => self::DATA_TYPE_STR,
+        'product_name'        => self::DATA_TYPE_STR,
         'sku'         => self::DATA_TYPE_STR,
         'description' => self::DATA_TYPE_STR,
         'quantity'    => self::DATA_TYPE_INT,
@@ -43,7 +43,7 @@ class productsModel extends abstractModel
     }
     public function getName()
     {
-        return $this->name;
+        return $this->product_name;
     }
     public function getSku()
     {
@@ -80,9 +80,9 @@ class productsModel extends abstractModel
 
 
     //Setter
-    public function setName($name)
+    public function setName($product_name)
     {
-        $this->name = $name;
+        $this->product_name = $product_name;
     }
     public function setSku($sku)
     {

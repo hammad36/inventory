@@ -82,6 +82,12 @@ class stockAdjustmentsModel extends AbstractModel
         return $this->product_id;
     }
 
+    public function getProductName()
+    {
+        $product = productsModel::getByPK($this->getProductId());
+        return $product ? $product->getName() : 'N/A';
+    }
+
     public function getChangeType(): string
     {
         return $this->change_type;
@@ -95,6 +101,11 @@ class stockAdjustmentsModel extends AbstractModel
     public function getUserId(): ?int
     {
         return $this->user_id;
+    }
+    public function getUserName()
+    {
+        $user_name = usersModel::getByPK($this->getUserId());
+        return $user_name ? $user_name->getFullName() : 'N/A';
     }
 
     public function getTimestamp(): string

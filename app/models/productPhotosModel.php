@@ -118,7 +118,7 @@ class productPhotosModel extends abstractModel
         return self::executeWithConnection(function ($connection) use ($categoryId) {
             $sql = 'SELECT 
                         p.product_id, 
-                        p.name, 
+                        p.product_name, 
                         p.description,
                         p.sku, 
                         p.unit_price,

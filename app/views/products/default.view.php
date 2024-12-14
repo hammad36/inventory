@@ -34,7 +34,8 @@ endif
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
         <div class="text-center my-10">
             <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
-                Products Overview
+                <span class="text-blue-600">
+                    Products</span> Overview
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-700">
                 Manage and explore your products with ease.
@@ -69,7 +70,7 @@ endif
                         <?php foreach ($products as $index => $product): ?>
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 text-gray-800"><?= htmlspecialchars($index + 1) ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($product['name'] ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($product['product_name'] ?? 'N/A') ?></td>
                                 <td class="px-6 py-4 text-gray-700"><?= htmlspecialchars($product['sku'] ?? 'N/A') ?></td>
                                 <td class="px-6 py-4 text-gray-600"><?= htmlspecialchars($product['description'] ?? 'N/A') ?></td>
                                 <td class="px-6 py-4 text-gray-800"><?= htmlspecialchars($product['quantity'] ?? '0') ?></td>

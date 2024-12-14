@@ -18,7 +18,7 @@ endif
                 <span class="text-blue-600">Stock Adjustments </span>Overview
             </h1>
             <p class="mt-6 text-lg leading-8 text-gray-700">
-                Review and manage your stock adjustments efficiently.
+                Review your stock adjustments efficiently.
             </p>
         </div>
 
@@ -38,39 +38,26 @@ endif
                     <tr>
                         <th class="px-6 py-4 text-left font-semibold">#</th>
                         <th class="px-6 py-4 text-left font-semibold">Product ID</th>
+                        <th class="px-6 py-4 text-left font-semibold">Product Name</th>
                         <th class="px-6 py-4 text-left font-semibold">Change Type</th>
                         <th class="px-6 py-4 text-left font-semibold">Quantity Change</th>
                         <th class="px-6 py-4 text-left font-semibold">User ID</th>
+                        <th class="px-6 py-4 text-left font-semibold">User Name</th>
                         <th class="px-6 py-4 text-left font-semibold">Timestamp</th>
-                        <th class="px-6 py-4 text-left font-semibold">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     <?php if (!empty($stockAdjustments)): ?>
                         <?php foreach ($stockAdjustments as $index => $adjustment): ?>
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 text-gray-800"><?= htmlspecialchars($index + 1) ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment['product_id'] ?? 'N/A') ?></td>
-                                <td class="px-6 py-4 text-gray-700"><?= htmlspecialchars($adjustment['change_type'] ?? 'N/A') ?></td>
-                                <td class="px-6 py-4 text-gray-800"><?= htmlspecialchars($adjustment['quantity_change'] ?? '0') ?></td>
-                                <td class="px-6 py-4 text-gray-800"><?= htmlspecialchars($adjustment['user_id'] ?? 'N/A') ?></td>
-                                <td class="px-6 py-4 text-gray-600"><?= htmlspecialchars($adjustment['timestamp'] ?? 'N/A') ?></td>
-                                <td class="px-6 py-4">
-                                    <div class="flex space-x-4">
-                                        <a href="/stockAdjustments/edit?id=<?= htmlspecialchars($adjustment['adjustment_id']) ?>"
-                                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg shadow-sm hover:bg-green-700 focus:outline-none">
-                                            Edit
-                                        </a>
-
-                                        <form method="POST" action="/stockAdjustments/delete?id=<?= htmlspecialchars($adjustment['adjustment_id']) ?>"
-                                            onsubmit="return confirm('Are you sure you want to delete this adjustment?');">
-                                            <button type="submit"
-                                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg shadow-sm hover:bg-red-700 focus:outline-none">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($index + 1) ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductId()) ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductName()) ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getQuantityChange() ?? '0') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserId() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserName() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getTimestamp() ?? 'N/A') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
