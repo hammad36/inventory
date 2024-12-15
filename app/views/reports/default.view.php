@@ -1,144 +1,163 @@
-<div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Inventory Reports</h1>
+<section
+    class="relative overflow-hidden min-h-[calc(101.1vh-8rem)] bg-gradient-to-b from-blue-100 via-blue-50 to-transparent pb-12  sm:pb-16  lg:pb-24 xl:pb-32 xl:">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Stock Levels Section -->
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Current Stock Levels</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="p-3">Category</th>
-                            <th class="p-3">Product</th>
-                            <th class="p-3">Current Stock</th>
-                            <th class="p-3">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($stockLevels as $item): ?>
-                            <tr class="border-b">
-                                <td class="p-3"><?= htmlspecialchars($item['category']) ?></td>
-                                <td class="p-3"><?= htmlspecialchars($item['product']) ?></td>
-                                <td class="p-3"><?= $item['current_stock'] ?></td>
-                                <td class="p-3">
-                                    <span class="<?= $item['current_stock'] < $item['low_threshold'] ? 'text-red-500' : 'text-green-500' ?>">
-                                        <?= $item['current_stock'] < $item['low_threshold'] ? 'Low Stock' : 'Sufficient' ?>
-                                    </span>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <canvas id="stockLevelsChart" class="mt-4"></canvas>
+    <div class="container mx-auto p-6 mt-20 sm:mt-28">
+        <h1 class="text-5xl font-extrabold text-gray-800 mb-8 text-center">Inventory Reports</h1>
+
+        <!-- Filters Section -->
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+            <button
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                onclick="generateReport('daily')">
+                Daily Report
+            </button>
+            <button
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                onclick="generateReport('weekly')">
+                Weekly Report
+            </button>
+            <button
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                onclick="generateReport('monthly')">
+                Monthly Report
+            </button>
+            <button
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                onclick="generateReport('yearly')">
+                Yearly Report
+            </button>
         </div>
 
-        <!-- Inventory Value Section -->
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Inventory Valuation</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-blue-100 p-4 rounded">
-                    <p class="text-sm text-gray-600">Total Inventory Value</p>
-                    <p class="text-2xl font-bold text-blue-600">$<?= number_format($totalInventoryValue, 2) ?></p>
-                </div>
-                <div class="bg-green-100 p-4 rounded">
-                    <p class="text-sm text-gray-600">Average Product Value</p>
-                    <p class="text-2xl font-bold text-green-600">$<?= number_format($averageProductValue, 2) ?></p>
-                </div>
+        <!-- Report Section -->
+        <div class="bg-white shadow-lg rounded-xl p-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Generated Report</h2>
+            <div id="report-meta" class="text-gray-600 mb-6 text-center">
+                <p>Report Type: <span id="report-type" class="font-medium text-blue-600">None</span></p>
+                <p>Date Generated: <span id="report-date" class="font-medium text-blue-600">-</span></p>
             </div>
-            <canvas id="inventoryValueChart" class="mt-4"></canvas>
-        </div>
-
-        <!-- Stock Adjustment History -->
-        <div class="bg-white shadow-md rounded-lg p-6 md:col-span-2">
-            <h2 class="text-xl font-semibold mb-4">Stock Adjustment History</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="p-3">Date</th>
-                            <th class="p-3">Product</th>
-                            <th class="p-3">Adjustment Type</th>
-                            <th class="p-3">Quantity</th>
-                            <th class="p-3">User</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($stockAdjustments as $adjustment): ?>
-                            <tr class="border-b">
-                                <td class="p-3"><?= htmlspecialchars($adjustment['timestamp']) ?></td>
-                                <td class="p-3"><?= htmlspecialchars($adjustment['product_name']) ?></td>
-                                <td class="p-3">
-                                    <span class="<?= $adjustment['change_type'] == 'addition' ? 'text-green-500' : 'text-red-500' ?>">
-                                        <?= htmlspecialchars(ucfirst($adjustment['change_type'])) ?>
-                                    </span>
-                                </td>
-                                <td class="p-3"><?= $adjustment['quantity_change'] ?></td>
-                                <td class="p-3"><?= htmlspecialchars($adjustment['user_name']) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <div id="report-content" class="overflow-x-auto">
+                <p class="text-gray-500 text-center">Select a date or range to generate the report.</p>
+            </div>
+            <div class="flex justify-center space-x-4 mt-8">
+                <button
+                    id="print-button"
+                    class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1 hidden"
+                    onclick="printReport()">
+                    Print Report
+                </button>
+                <button
+                    id="export-button"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1 hidden"
+                    onclick="exportReport()">
+                    Export to CSV
+                </button>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <script>
-    // Stock Levels Chart
-    var stockLevelsCtx = document.getElementById('stockLevelsChart').getContext('2d');
-    var stockLevelsChart = new Chart(stockLevelsCtx, {
-        type: 'bar',
-        data: {
-            labels: <?= json_encode(array_column($stockLevels, 'product')) ?>,
-            datasets: [{
-                label: 'Current Stock Levels',
-                data: <?= json_encode(array_column($stockLevels, 'current_stock')) ?>,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Stock Quantity'
-                    }
-                }
-            }
-        }
-    });
+    async function fetchReportData(params) {
+        try {
+            const url = new URL('/api/reports', window.location.origin);
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-    // Inventory Value Chart
-    var inventoryValueCtx = document.getElementById('inventoryValueChart').getContext('2d');
-    var inventoryValueChart = new Chart(inventoryValueCtx, {
-        type: 'pie',
-        data: {
-            labels: <?= json_encode(array_column($inventoryValueBreakdown, 'category')) ?>,
-            datasets: [{
-                data: <?= json_encode(array_column($inventoryValueBreakdown, 'total_value')) ?>,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Inventory Value by Category'
-                }
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching report:', error);
+            alert('Failed to fetch report. Please try again.');
+            return [];
         }
-    });
+    }
+
+    async function generateReport(type) {
+        const reportContent = document.getElementById('report-content');
+        const reportType = document.getElementById('report-type');
+        const reportDate = document.getElementById('report-date');
+        const printButton = document.getElementById('print-button');
+        const exportButton = document.getElementById('export-button');
+
+        reportContent.innerHTML = `
+            <div class="flex justify-center items-center">
+                <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-600"></div>
+                <p class="ml-4 text-blue-600 font-semibold">Loading...</p>
+            </div>
+        `;
+
+        reportType.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Report`;
+        reportDate.textContent = new Date().toLocaleString();
+
+        printButton.classList.add('hidden');
+        exportButton.classList.add('hidden');
+
+        const data = await fetchReportData({
+            type
+        });
+        renderReport(data);
+
+        printButton.classList.remove('hidden');
+        exportButton.classList.remove('hidden');
+    }
+
+    function renderReport(data) {
+        const reportContent = document.getElementById('report-content');
+
+        if (data.length === 0) {
+            reportContent.innerHTML = `<p class="text-gray-500 text-center">No data available for the selected period.</p>`;
+            return;
+        }
+
+        let html = `
+            <table class="w-full border border-gray-200 text-sm mt-4">
+                <thead>
+                    <tr class="bg-blue-100">
+                        <th class="p-3 border border-gray-200">#</th>
+                        <th class="p-3 border border-gray-200">Product ID</th>
+                        <th class="p-3 border border-gray-200">Product Name</th>
+                        <th class="p-3 border border-gray-200">Change Type</th>
+                        <th class="p-3 border border-gray-200">Quantity Change</th>
+                        <th class="p-3 border border-gray-200">User ID</th>
+                        <th class="p-3 border border-gray-200">User Name</th>
+                        <th class="p-3 border border-gray-200">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        data.forEach(entry => {
+            html += `
+                    <?php if (!empty($stockAdjustments)): ?>
+                        <?php foreach ($stockAdjustments as $index => $adjustment): ?>
+                <tr class="border-b hover:bg-blue-50">
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($index + 1) ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductId()) ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductName()) ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getQuantityChange() ?? '0') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserId() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserName() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getTimestamp() ?? 'N/A') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">No stock adjustments found.</td>
+                        </tr>
+                    <?php endif; ?>
+            `;
+        });
+
+        html += `
+                </tbody>
+            </table>
+        `;
+
+        reportContent.innerHTML = html;
+    }
 </script>
