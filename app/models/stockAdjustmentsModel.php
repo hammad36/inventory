@@ -37,7 +37,8 @@ class stockAdjustmentsModel extends AbstractModel
     const DATA_TYPE_NULL    = \PDO::PARAM_NULL;
     const DATA_TYPE_ENUM    = 'enum';
     const DATA_TYPE_TIMESTAMP = \PDO::PARAM_STR;
-    // Setters with validation
+
+    // Setters with Validation
     public function setProductId(int $product_id): void
     {
         $this->product_id = $this->filterInt($product_id);
@@ -81,7 +82,7 @@ class stockAdjustmentsModel extends AbstractModel
         return $this->product_id;
     }
 
-    public function getProductName()
+    public function getProductName(): string
     {
         $product = productsModel::getByPK($this->getProductId());
         return $product ? $product->getName() : 'N/A';
@@ -101,10 +102,11 @@ class stockAdjustmentsModel extends AbstractModel
     {
         return $this->user_id;
     }
-    public function getUserName()
+
+    public function getUserName(): string
     {
-        $user_name = usersModel::getByPK($this->getUserId());
-        return $user_name ? $user_name->getFullName() : 'N/A';
+        $user = usersModel::getByPK($this->getUserId());
+        return $user ? $user->getFullName() : 'N/A';
     }
 
     public function getTimestamp(): string
@@ -112,7 +114,7 @@ class stockAdjustmentsModel extends AbstractModel
         return $this->timestamp ?? date('Y-m-d H:i:s');
     }
 
-    // Utility methods (optional)
+    // Utility Methods
     public function isAddition(): bool
     {
         return $this->change_type === 'addition';
@@ -123,22 +125,40 @@ class stockAdjustmentsModel extends AbstractModel
         return $this->change_type === 'reduction';
     }
 
-    public static function getByCategoryId(int $categoryId): array
+    // Query Methods
+
+    /**
+     * Fetch adjustments filtered by a specific time period
+     */
+    public static function getFiltered(string $type): array
     {
-        $sql = "
-        SELECT sa.*
-        FROM stock_adjustments sa
-        INNER JOIN products p ON sa.product_id = p.product_id
-        WHERE p.category_id = :category_id
-    ";
+        $condition = '';
+        switch ($type) {
+            case 'daily':
+                $condition = "DATE(timestamp) = CURDATE()";
+                break;
+            case 'weekly':
+                $condition = "WEEK(timestamp, 1) = WEEK(CURDATE(), 1) AND YEAR(timestamp) = YEAR(CURDATE())";
+                break;
+            case 'monthly':
+                $condition = "MONTH(timestamp) = MONTH(CURDATE()) AND YEAR(timestamp) = YEAR(CURDATE())";
+                break;
+            case 'yearly':
+                $condition = "YEAR(timestamp) = YEAR(CURDATE())";
+                break;
+            default:
+                return [];
+        }
 
+        $sql = "SELECT * FROM stock_adjustments WHERE $condition";
         $stmt = self::getConnection()->prepare($sql);
-        $stmt->bindValue(':category_id', $categoryId, self::DATA_TYPE_INT);
         $stmt->execute();
-
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
 
+    /**
+     * Fetch recent stock adjustments
+     */
     public static function getRecentAdjustments(int $limit = 10): array
     {
         $sql = "
@@ -160,44 +180,29 @@ class stockAdjustmentsModel extends AbstractModel
         ORDER BY 
             sa.timestamp DESC
         LIMIT :limit
-    ";
+        ";
 
-        try {
-            $stmt = self::getConnection()->prepare($sql);
-            $stmt->bindValue(':limit', $limit, self::DATA_TYPE_INT);
-            $stmt->execute();
-
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            // Log the error (replace with your actual logging mechanism)
-            error_log('Error fetching recent stock adjustments: ' . $e->getMessage());
-            return [];
-        }
+        $stmt = self::getConnection()->prepare($sql);
+        $stmt->bindValue(':limit', $limit, self::DATA_TYPE_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-
-    public static function getFiltered($type)
+    /**
+     * Fetch adjustments by product category
+     */
+    public static function getByCategoryId(int $categoryId): array
     {
-        $query = "SELECT * FROM stock_adjustments WHERE ";
+        $sql = "
+        SELECT sa.*
+        FROM stock_adjustments sa
+        INNER JOIN products p ON sa.product_id = p.product_id
+        WHERE p.category_id = :category_id
+        ";
 
-        switch ($type) {
-            case 'daily':
-                $query .= "DATE(timestamp) = CURDATE()"; // Fetch records for today
-                break;
-            case 'weekly':
-                $query .= "WEEK(timestamp, 1) = WEEK(CURDATE(), 1) AND YEAR(timestamp) = YEAR(CURDATE())"; // Fetch records for this week
-                break;
-            case 'monthly':
-                $query .= "MONTH(timestamp) = MONTH(CURDATE()) AND YEAR(timestamp) = YEAR(CURDATE())"; // Fetch records for this month
-                break;
-            case 'yearly':
-                $query .= "YEAR(timestamp) = YEAR(CURDATE())"; // Fetch records for this year
-                break;
-            default:
-                return [];
-        }
-        $stmt = self::getConnection()->prepare($query);
+        $stmt = self::getConnection()->prepare($sql);
+        $stmt->bindValue(':category_id', $categoryId, self::DATA_TYPE_INT);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
     }
 }
