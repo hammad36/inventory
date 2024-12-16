@@ -49,7 +49,7 @@
                 <button
                     id="export-button"
                     class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1 hidden"
-                    onclick="exportToCSV(data)">
+                    onclick="exportToCSV()">
                     Export CSV
                 </button>
             </div>
@@ -62,14 +62,12 @@
         try {
             const response = await fetch(`/reports/filter?type=${type}`);
             if (!response.ok) {
-                // More specific error handling
                 const errorText = await response.text();
                 throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
             return await response.json();
         } catch (error) {
             console.error('Error fetching report:', error);
-            // More user-friendly error display
             const reportContent = document.getElementById('report-content');
             reportContent.innerHTML = `
             <div class="text-red-600 text-center">
@@ -80,7 +78,6 @@
             return [];
         }
     }
-
 
     async function generateReport(type) {
         const reportContent = document.getElementById('report-content');
@@ -103,6 +100,7 @@
         exportButton.classList.add('hidden');
 
         const data = await fetchReportData(type);
+        window.currentReportData = data; // Store data globally for export
         renderReport(data);
 
         printButton.classList.remove('hidden');
@@ -156,64 +154,213 @@
 
         reportContent.innerHTML = html;
     }
+
     // Function to handle printing the report
     function printReport() {
         const reportContent = document.getElementById('report-content').innerHTML;
         const reportType = document.getElementById('report-type').textContent;
         const reportDate = document.getElementById('report-date').textContent;
+
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-        <html>
+        <!DOCTYPE html>
+        <html lang="en">
             <head>
+                <meta charset="UTF-8">
                 <title>${reportType} - ${reportDate}</title>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
                 <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f4f4f4; font-weight: bold; }
+                    @page {
+                        size: A4 landscape;
+                        margin: 10mm;
+                    }
+                    * {
+                        box-sizing: border-box;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    body { 
+                        font-family: 'Inter', Arial, sans-serif; 
+                        line-height: 1.4; 
+                        color: #333;
+                        width: 100%;
+                        margin: 0;
+                        padding: 5mm;
+                        font-size: 10pt;
+                    }
+                    .report-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 3px solid #1E40AF;
+                        padding-bottom: 10px;
+                        margin-bottom: 15px;
+                    }
+                    .report-header-left h1 { 
+                        color: #1E40AF; 
+                        font-size: 20pt;
+                        font-weight: 700;
+                    }
+                    .report-header-right {
+                        text-align: right;
+                        color: #6B7280;
+                        font-size: 10pt;
+                    }
+                    .report-meta {
+                        background-color: #F3F4F6; 
+                        padding: 8px;
+                        margin-bottom: 15px;
+                        border-radius: 5px;
+                        display: flex;
+                        justify-content: space-between;
+                        font-size: 10pt;
+                    }
+                    table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        margin-top: 10px; 
+                        font-size: 10pt;
+                    }
+                    th { 
+                        color: rgb(0, 0, 0); 
+                        padding: 6px; 
+                        text-align: left; 
+                        font-weight: bold;
+                        border: 4px solid #1E40AF; 
+                    } 
+                    td { 
+                        border: 3px solid #1E40AF; 
+                        padding: 5px; 
+                        text-align: left;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 200px;
+                    }
+                    tr:nth-child(even) { 
+                        background-color: #F9FAFB; 
+                    }
+                    .report-footer {
+                        margin-top: 10px;
+                        padding-top: 5px;
+                        border-top: 1px solid #E5E7EB;
+                        text-align: center;
+                        font-size: 10pt;
+                        color: #1E40AF;
+                    }
+                    @media print {
+                        body {
+                            width: 100%;
+                        }
+                        table {
+                            page-break-inside: auto;
+                        }
+                        tr {
+                            page-break-inside: avoid;
+                            page-break-after: auto;
+                        }
+                        thead {
+                            display: table-header-group;
+                            position: sticky;
+                            top: 0;
+                            background: white;
+                        }
+                    }
+                    /* Responsive table scrolling for large datasets */
+                    .table-container {
+                        max-height: 85vh;
+                        overflow-y: auto;
+                    }
                 </style>
             </head>
             <body>
-                <h1 style="text-align:center;">${reportType}</h1>
-                <p style="text-align:center;">Date Generated: ${reportDate}</p>
-                ${reportContent}
-                <p style="text-align:center;">Generated by: <?php echo htmlspecialchars($_SESSION['user']['name']); ?></p>
+                <div class="report-header">
+                    <div class="report-header-left">
+                        <h1>${reportType}</h1>
+                    </div>
+                    <div class="report-header-right">
+                        <p>InvenHammad Inventory System</p>
+                        <p>Report Generated: ${reportDate}</p>
+                    </div>
+                </div>
+
+                <div class="report-meta">
+                    <div>
+                        <strong>Report Type:</strong> ${reportType}
+                    </div>
+                    <div>
+                        <strong>Generated By:</strong> <?php echo htmlspecialchars($_SESSION['user']['name']); ?>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    ${reportContent}
+                </div>
+
+                <div class="report-footer">
+                    <p>© ${new Date().getFullYear()} InvenHammad - Confidential Document</p>
+                    <p>Page <span class="pageNumber"></span> of <span class="totalPages"></span></p>
+                </div>
+
+                <script>
+                    function updatePageNumbers() {
+                        const totalPages = window.print ? window.print.length : 1;
+                        document.querySelectorAll('.totalPages').forEach(el => el.textContent = totalPages);
+                        document.querySelectorAll('.pageNumber').forEach((el, index) => el.textContent = index + 1);
+                    }
+                    window.onload = updatePageNumbers;
+                    window.onafterprint = updatePageNumbers;
+                <\/script>
             </body>
         </html>
     `);
         printWindow.document.close();
-        printWindow.print();
+
+        // Automatically trigger print dialog
+        printWindow.addEventListener('load', () => {
+            printWindow.print();
+        });
     }
 
-    function exportToCSV(data) {
-        if (data.length === 0) return;
+    function exportToCSV() {
+        // Use the globally stored report data
+        const data = window.currentReportData || [];
+
+        if (data.length === 0) {
+            alert("No data available to export.");
+            return;
+        }
 
         const headers = [
             'Product ID', 'Product Name', 'Change Type',
             'Quantity Change', 'User ID', 'User Name', 'Timestamp'
         ];
 
+        // Map data into rows, handling undefined or null values
+        const rows = data.map(entry => [
+            entry.product_id || '',
+            entry.product_name || '',
+            entry.change_type || '',
+            entry.quantity_change || 0,
+            entry.user_id || '',
+            entry.user_name || '',
+            entry.timestamp || ''
+        ]);
+
+        // Join headers and rows into a CSV string
         const csvContent = [
-            headers.join(','),
-            ...data.map(entry => [
-                entry.product_id,
-                entry.product_name,
-                entry.change_type,
-                entry.quantity_change,
-                entry.user_id,
-                entry.user_name,
-                entry.timestamp
-            ].map(value => `"${value}"`).join(','))
+            headers.join(','), // Header row
+            ...rows.map(row => row.map(value => `"${value}"`).join(',')) // Data rows
         ].join('\n');
 
+        // Create a Blob for the CSV content
         const blob = new Blob([csvContent], {
             type: 'text/csv;charset=utf-8;'
         });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `stock_adjustments_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
+        link.setAttribute('download', `inventory_report_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
