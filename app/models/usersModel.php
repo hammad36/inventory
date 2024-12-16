@@ -12,26 +12,30 @@ class usersModel extends abstractModel
     protected $user_id;
     protected $first_name;
     protected $last_name;
-    protected $email;
-    protected $password;
     protected $date_of_birth;
     protected $gender;
+    protected $email;
+    protected $password;
     protected $role;
+    protected $status;
     protected $created_at;
     protected $updated_at;
+    protected $last_login;
 
     // Table Metadata
     protected static $tableName = 'users';
     protected static $tableSchema = [
         'first_name'      => self::DATA_TYPE_STR,
         'last_name'       => self::DATA_TYPE_STR,
-        'email'           => self::DATA_TYPE_STR,
-        'password'        => self::DATA_TYPE_STR,
         'date_of_birth'   => self::DATA_TYPE_DATE,
         'gender'          => self::DATA_TYPE_STR,
+        'email'           => self::DATA_TYPE_STR,
+        'password'        => self::DATA_TYPE_STR,
         'role'            => self::DATA_TYPE_STR,
+        'status'          => self::DATA_TYPE_STR,
         'created_at'      => self::DATA_TYPE_DATE,
         'updated_at'      => self::DATA_TYPE_DATE,
+        'last_login'      => self::DATA_TYPE_DATE,
     ];
 
     protected static $primaryKey = 'user_id';
@@ -52,14 +56,7 @@ class usersModel extends abstractModel
         $this->date_of_birth = $this->filterDate($dateOfBirth);
     }
 
-    public function setGender($gender)
-    {
-        $validGenders = ['male', 'female'];
-        if (!in_array($gender, $validGenders)) {
-            throw new \Exception("Invalid gender. Allowed values: 'male', 'female'.");
-        }
-        $this->gender = $gender;
-    }
+
 
     public function setEmail($email)
     {
@@ -70,22 +67,49 @@ class usersModel extends abstractModel
         $this->email = $filteredEmail;
     }
 
+    public function setGender($gender)
+    {
+        $gender = ucfirst(strtolower($gender)); // Converts input to 'Male' or 'Female'
+        $validGenders = ['Male', 'Female'];
+        if (!in_array($gender, $validGenders)) {
+            throw new \Exception("Invalid gender. Allowed values: 'Male', 'Female'.");
+        }
+        $this->gender = $gender;
+    }
+
+
+    public function setRole($role)
+    {
+        $validRoles = ['user', 'admin'];
+        if (!in_array($role, $validRoles)) {
+            throw new \Exception("Invalid Role. Allowed values: 'user', 'admin'.");
+        }
+        $this->role = $role;
+    }
+
+    public function setStatus($status)
+    {
+        $validStatuses = ['active', 'inactive', 'banned'];
+        if (!in_array($status, $validStatuses)) {
+            throw new \Exception("Invalid Status. Allowed values: 'active', 'inactive', 'banned'.");
+        }
+        $this->status = $status;
+    }
+
+    public function setLastLogin($lastLogin = null)
+    {
+        $this->last_login = $lastLogin ? $this->filterDate($lastLogin) : null;
+    }
+
     public function setPassword($password)
     {
-        if (strlen($password) < 6) {
-            throw new \Exception('Password must be at least 6 characters.');
+        if (strlen($password) < 8) {
+            throw new \Exception('Password must be at least 8 characters.');
         }
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    public function setRole($role)
-    {
-        $validRoles = ['admin', 'user'];
-        if (!in_array($role, $validRoles)) {
-            throw new \Exception("Invalid role. Allowed values: 'admin', 'user'.");
-        }
-        $this->role = $role;
-    }
+
 
 
 
@@ -138,6 +162,16 @@ class usersModel extends abstractModel
         return $this->role;
     }
 
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function getLastLogin()
+    {
+        return $this->last_login;
+    }
+
     public function getCreatedAt()
     {
         return $this->created_at;
@@ -145,6 +179,12 @@ class usersModel extends abstractModel
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    public function updateLastLogin()
+    {
+        $this->last_login = date('Y-m-d H:i:s');
+        // You might want to add logic to save this to the database
     }
 
     // Additional Methods

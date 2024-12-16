@@ -279,7 +279,7 @@
                         <h1>${reportType}</h1>
                     </div>
                     <div class="report-header-right">
-                        <p>InvenHammad Inventory System</p>
+                        <p>InvenHammad System</p>
                         <p>Report Generated: ${reportDate}</p>
                     </div>
                 </div>
