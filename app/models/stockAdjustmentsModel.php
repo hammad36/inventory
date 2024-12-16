@@ -174,4 +174,30 @@ class stockAdjustmentsModel extends AbstractModel
             return [];
         }
     }
+
+
+    public static function getFiltered($type)
+    {
+        $query = "SELECT * FROM stock_adjustments WHERE ";
+
+        switch ($type) {
+            case 'daily':
+                $query .= "DATE(timestamp) = CURDATE()"; // Fetch records for today
+                break;
+            case 'weekly':
+                $query .= "WEEK(timestamp, 1) = WEEK(CURDATE(), 1) AND YEAR(timestamp) = YEAR(CURDATE())"; // Fetch records for this week
+                break;
+            case 'monthly':
+                $query .= "MONTH(timestamp) = MONTH(CURDATE()) AND YEAR(timestamp) = YEAR(CURDATE())"; // Fetch records for this month
+                break;
+            case 'yearly':
+                $query .= "YEAR(timestamp) = YEAR(CURDATE())"; // Fetch records for this year
+                break;
+            default:
+                return [];
+        }
+        $stmt = self::getConnection()->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
 }

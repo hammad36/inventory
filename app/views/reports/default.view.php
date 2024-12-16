@@ -28,6 +28,7 @@
             </button>
         </div>
 
+
         <!-- Report Section -->
         <div class="bg-white shadow-lg rounded-xl p-8">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Generated Report</h2>
@@ -45,29 +46,18 @@
                     onclick="printReport()">
                     Print Report
                 </button>
-                <button
-                    id="export-button"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all duration-300 transform hover:-translate-y-1 hidden"
-                    onclick="exportReport()">
-                    Export to CSV
-                </button>
             </div>
         </div>
     </div>
 </section>
 
 <script>
-    async function fetchReportData(params) {
+    async function fetchReportData(type) {
         try {
-            const url = new URL('/api/reports', window.location.origin);
-            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-            const response = await fetch(url);
-
+            const response = await fetch(`/reports/filter?type=${type}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
             return await response.json();
         } catch (error) {
             console.error('Error fetching report:', error);
@@ -96,9 +86,7 @@
         printButton.classList.add('hidden');
         exportButton.classList.add('hidden');
 
-        const data = await fetchReportData({
-            type
-        });
+        const data = await fetchReportData(type);
         renderReport(data);
 
         printButton.classList.remove('hidden');
@@ -130,26 +118,18 @@
                 <tbody>
         `;
 
-        data.forEach(entry => {
+        data.forEach((entry, index) => {
             html += `
-                    <?php if (!empty($stockAdjustments)): ?>
-                        <?php foreach ($stockAdjustments as $index => $adjustment): ?>
                 <tr class="border-b hover:bg-blue-50">
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($index + 1) ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductId()) ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductName()) ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getQuantityChange() ?? '0') ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserId() ?? 'N/A') ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserName() ?? 'N/A') ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getTimestamp() ?? 'N/A') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">No stock adjustments found.</td>
-                        </tr>
-                    <?php endif; ?>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${index + 1}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.product_id}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.product_name}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.change_type || 'N/A'}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.quantity_change || '0'}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.user_id || 'N/A'}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.user_name || 'N/A'}</td>
+                    <td class="px-6 py-4 text-gray-800 font-medium">${entry.timestamp || 'N/A'}</td>
+                </tr>
             `;
         });
 
@@ -159,5 +139,51 @@
         `;
 
         reportContent.innerHTML = html;
+    }
+    // Function to handle printing the report
+    function printReport() {
+        const reportContent = document.getElementById('report-content').innerHTML;
+        const reportType = document.getElementById('report-type').textContent;
+        const reportDate = document.getElementById('report-date').textContent;
+
+        // Open a new window for printing
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>${reportType} - ${reportDate}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            line-height: 1.6;
+                            margin: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f4f4f4;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1 style="text-align:center;">${reportType}</h1>
+                    <p style="text-align:center;">Date Generated: ${reportDate}</p>
+                    ${reportContent}
+
+                    <h1 style="text-align:center;">this report was generated by ${user['name']}</h1>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
     }
 </script>
