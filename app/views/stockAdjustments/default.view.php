@@ -53,7 +53,16 @@ endif
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($index + 1) ?></td>
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductId()) ?></td>
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductName()) ?></td>
-                                <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?></td>
+                                <td class="px-6 py-4 font-medium 
+                                    <?php if ($adjustment->getChangeType() === 'addition'): ?>
+                                        text-green-800
+                                    <?php elseif ($adjustment->getChangeType() === 'reduction'): ?>
+                                        text-red-600
+                                    <?php else: ?>
+                                        text-gray-800
+                                    <?php endif; ?>">
+                                    <?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?>
+                                </td>
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getQuantityChange() ?? '0') ?></td>
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserId() ?? 'N/A') ?></td>
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getUserName() ?? 'N/A') ?></td>
