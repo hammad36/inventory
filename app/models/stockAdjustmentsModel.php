@@ -89,8 +89,9 @@ class StockAdjustmentsModel extends AbstractModel
 
     public function setQuantityChange(int $quantity_change): void
     {
-        if ($quantity_change <= 0) {
-            throw new \InvalidArgumentException("Quantity change must be a positive integer.");
+        // Allow negative quantity change for special cases like deletion
+        if ($quantity_change <= 0 && !in_array($this->change_type, ['deleteProduct', 'reduction'])) {
+            throw new \InvalidArgumentException("Quantity change must be a positive integer unless it's a deletion or reduction.");
         }
 
         $this->quantity_change = $this->filterInt($quantity_change);
@@ -98,12 +99,14 @@ class StockAdjustmentsModel extends AbstractModel
 
     public function setProductQuantityChange(int $quantity_change): void
     {
-        if ($quantity_change === 0) {
-            throw new \InvalidArgumentException("Quantity change cannot be zero.");
+        // Allow negative quantity change for special cases like deletion
+        if ($quantity_change < 0 && !in_array($this->change_type, ['deleteProduct', 'reduction'])) {
+            throw new \InvalidArgumentException("Quantity change cannot be negative unless it's a deletion or reduction.");
         }
 
         $this->quantity_change = $this->filterInt($quantity_change);
     }
+
 
 
     public function setUserId(?int $user_id): void
