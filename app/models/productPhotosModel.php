@@ -19,14 +19,14 @@ class productPhotosModel extends abstractModel
     // Database schema
     protected static $tableName = 'product_photos';
     protected static $tableSchema = [
-        'product_id' => self::DATA_TYPE_INT,
-        'photo_url'  => self::DATA_TYPE_STR,
+        'product_id'  => self::DATA_TYPE_INT,
+        'photo_url'   => self::DATA_TYPE_STR,
         'uploaded_at' => self::DATA_TYPE_DATE,
     ];
 
     protected static $primaryKey = 'photo_id';
 
-    // Setters and Getters
+    // Setters
     public function setProductId(int $product_id): void
     {
         $this->product_id = $this->filterInt($product_id);
@@ -37,6 +37,7 @@ class productPhotosModel extends abstractModel
         $this->photo_url = $this->filterUrl($photo_url);
     }
 
+    // Getters
     public function getProductId(): int
     {
         return $this->product_id;
@@ -66,7 +67,7 @@ class productPhotosModel extends abstractModel
             $stmt->execute($productIds);
 
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return array_column($result, 'photo_urls', 'product_id'); // Map by product_id
+            return array_column($result, 'photo_urls', 'product_id');
         });
     }
 
@@ -81,7 +82,7 @@ class productPhotosModel extends abstractModel
         });
     }
 
-    // Add multiple photos at once
+    // Add multiple photos to a product
     public static function addPhotosToProduct(int $productId, array $photoUrls): bool
     {
         if (empty($photoUrls)) {
@@ -90,29 +91,29 @@ class productPhotosModel extends abstractModel
 
         return self::executeWithConnection(function ($connection) use ($productId, $photoUrls) {
             $sql = 'INSERT INTO product_photos (product_id, photo_url, uploaded_at) VALUES ';
-            $values = [];
             $placeholders = [];
+            $params = [];
+            $timestamp = date('Y-m-d H:i:s');
 
-            $date = date('Y-m-d H:i:s'); // Current timestamp for `uploaded_at`
-            foreach ($photoUrls as $photoUrl) {
-                $placeholders[] = '(:product_id, :photo_url, :uploaded_at)';
-                $values[] = ['product_id' => $productId, 'photo_url' => $photoUrl, 'uploaded_at' => $date];
+            foreach ($photoUrls as $index => $url) {
+                $placeholders[] = "(:product_id_{$index}, :photo_url_{$index}, :uploaded_at_{$index})";
+                $params[":product_id_{$index}"] = $productId;
+                $params[":photo_url_{$index}"] = $url;
+                $params[":uploaded_at_{$index}"] = $timestamp;
             }
 
-            $sql .= implode(',', $placeholders);
-
+            $sql .= implode(', ', $placeholders);
             $stmt = $connection->prepare($sql);
-            foreach ($values as $index => $data) {
-                $stmt->bindValue(":product_id", $data['product_id'], \PDO::PARAM_INT);
-                $stmt->bindValue(":photo_url", $data['photo_url'], \PDO::PARAM_STR);
-                $stmt->bindValue(":uploaded_at", $data['uploaded_at'], \PDO::PARAM_STR);
+
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value, \PDO::PARAM_STR);
             }
 
             return $stmt->execute();
         });
     }
 
-    // Fetch products with their associated photos by category ID
+    // Fetch products with photos by category ID
     public static function getByCategoryId(int $categoryId): array
     {
         return self::executeWithConnection(function ($connection) use ($categoryId) {
@@ -138,7 +139,23 @@ class productPhotosModel extends abstractModel
         });
     }
 
-    // Handle transactions for adding, deleting photos
+    // Fetch photos by product ID
+    public static function getPhotosByProductId($productId)
+    {
+        $sql = "SELECT photo_url FROM product_photos WHERE product_id = :product_id";
+        $stmt = self::getConnection()->prepare($sql);
+        $stmt->bindParam(':product_id', $productId, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        $photos = [];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $photos[] = $row['photo_url'];
+        }
+        return $photos;
+    }
+
+
+    // Transaction wrapper for photo operations
     public static function handlePhotoTransaction(callable $operation): bool
     {
         $db = databaseHandler::factory();
@@ -147,43 +164,12 @@ class productPhotosModel extends abstractModel
             if ($operation()) {
                 $db->commit();
                 return true;
-            } else {
-                throw new \Exception('Failed to perform operation on photos.');
             }
+            throw new \Exception('Failed to complete photo transaction.');
         } catch (\Exception $e) {
             $db->rollBack();
             alertHandler::getInstance()->displayAlert('error', $e->getMessage());
             return false;
-        }
-    }
-
-    public static function getPhotosByProductId(int $productId): array
-    {
-        try {
-            // Establish a database connection
-            $db = databaseHandler::factory();
-            if (!$db) {
-                throw new \Exception('Database connection not established.');
-            }
-
-            // Prepare the query
-            $query = "SELECT photo_url FROM product_photos WHERE product_id = :product_id";
-            $stmt = $db->prepare($query);
-            $stmt->bindValue(':product_id', $productId, \PDO::PARAM_INT);
-
-            // Execute the query
-            if (!$stmt->execute()) {
-                throw new \Exception('Failed to execute query: ' . implode(' | ', $stmt->errorInfo()));
-            }
-
-            // Fetch and return results
-            $photos = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-            return $photos ?: []; // Return an empty array if no results are found
-
-        } catch (\Exception $e) {
-            // Log error or handle as needed
-            error_log($e->getMessage());
-            return []; // Return an empty array on failure
         }
     }
 }

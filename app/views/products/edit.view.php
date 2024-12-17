@@ -66,13 +66,15 @@ endif
 
             <div>
                 <label for="photo_url1" class="block text-sm font-medium text-gray-700">Photo URL 1</label>
-                <input type="url" name="photo_url1" id="photo_url1" value="<?= htmlspecialchars($photos[0] ?? '') ?>"
+                <input type="url" name="photo_url1" id="photo_url1"
+                    value="<?= htmlspecialchars($photoUrl1) ?>"
                     class="w-full px-4 py-2 mt-1 text-gray-900 bg-gray-50 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 transition duration-300">
             </div>
 
             <div>
                 <label for="photo_url2" class="block text-sm font-medium text-gray-700">Photo URL 2</label>
-                <input type="url" name="photo_url2" id="photo_url2" value="<?= htmlspecialchars($photos[1] ?? '') ?>"
+                <input type="url" name="photo_url2" id="photo_url2"
+                    value="<?= htmlspecialchars($photoUrl2) ?>"
                     class="w-full px-4 py-2 mt-1 text-gray-900 bg-gray-50 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 transition duration-300">
             </div>
 

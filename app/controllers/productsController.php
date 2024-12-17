@@ -20,6 +20,7 @@ class productsController extends abstractController
         $this->alertHandler = alertHandler::getInstance();
     }
 
+    // Default action: List products
     public function defaultAction()
     {
         $categoryId = $this->filterInt($_GET['category_id'] ?? null);
@@ -29,6 +30,102 @@ class productsController extends abstractController
         $this->renderProductsView($products, $category);
     }
 
+    // Add a product
+    public function addAction()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $categoryId = $this->filterInt($_POST['category_id'] ?? $_GET['category_id'] ?? null);
+
+            if (!$categoryId) {
+                $this->redirectWithAlert('error', '', "No category selected.");
+                return;
+            }
+
+            // Validate and save product
+            $product = $this->validateAndSaveProduct($categoryId);
+
+            if ($product) {
+                // Handle product photos
+                $photoUrls = $this->getPhotoUrlsFromPost();
+                productPhotosModel::addPhotosToProduct($product->getProductId(), $photoUrls);
+
+                $this->redirectWithAlert('add', "/products?category_id=$categoryId", "Product added successfully.");
+            } else {
+                $this->redirectWithAlert('error', "/products?category_id=$categoryId", "Failed to add product.");
+            }
+        }
+
+        $this->_data['currentCategoryId'] = $this->filterInt($_GET['category_id'] ?? null);
+        $this->startSessionIfNotStarted();
+        $this->_view();
+    }
+
+    // Edit a product
+    public function editAction()
+    {
+        $productId = $this->filterInt($_GET['id'] ?? null);
+        if (!$productId) {
+            $this->redirectWithAlert('error', '', "Invalid product ID.");
+            return;
+        }
+
+        $product = productsModel::getByPK($productId);
+        if (!$product) {
+            $this->redirectWithAlert('error', '', "Product not found.");
+            return;
+        }
+
+        $currentCategoryId = $this->filterInt($_GET['category_id'] ?? $product->getCategoryID());
+        $productPhotos = productPhotosModel::getPhotosByProductId($productId);
+
+        // Ensure photos array has at least 2 items
+        $photoUrl1 = $productPhotos[0] ?? '';
+        $photoUrl2 = $productPhotos[1] ?? '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->updateProductDetails($product, $currentCategoryId)) {
+                $newPhotos = $this->getPhotoUrlsFromPost();
+                $this->updateProductPhotos($productId, $newPhotos);
+
+                $this->redirectWithAlert('success', "/products?category_id=$currentCategoryId", "Product updated successfully.");
+            } else {
+                $this->redirectWithAlert('error', "/products?category_id=$currentCategoryId", "Failed to update product.");
+            }
+        }
+
+        $this->_data = compact('product', 'productPhotos', 'currentCategoryId', 'photoUrl1', 'photoUrl2');
+        $this->startSessionIfNotStarted();
+        $this->_view();
+    }
+
+    // Delete a product
+    public function deleteAction()
+    {
+        $productId = $this->filterInt($_GET['id'] ?? null);
+        if (!$productId) {
+            $this->redirectWithAlert('error', '', 'Invalid product ID.');
+            return;
+        }
+
+        $product = productsModel::getByPK($productId);
+        if (!$product) {
+            $this->redirectWithAlert('error', '', 'Product not found.');
+            return;
+        }
+
+        $categoryId = $product->getCategoryID();
+        $redirectUrl = '/products' . ($categoryId ? "?category_id=$categoryId" : '');
+
+        if ($product->deleteWithPhotos()) {
+            $this->redirectWithAlert('remove', $redirectUrl, 'Product and associated photos deleted successfully.');
+        } else {
+            $this->redirectWithAlert('error', $redirectUrl, 'Failed to delete product or associated photos.');
+        }
+    }
+
+    // --- Private Utility Methods ---
+
+    // Fetch products with their photos
     private function getProducts($categoryId)
     {
         $products = $categoryId
@@ -42,200 +139,99 @@ class productsController extends abstractController
         return $products;
     }
 
+    // Render the products view
     private function renderProductsView(array $products, $category = null)
     {
         $categories = categoriesModel::getAll();
-        $this->_data = [
-            'products' => $products,
-            'categories' => $categories,
-            'category' => $category,
-        ];
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        $this->_data = compact('products', 'categories', 'category');
+        $this->startSessionIfNotStarted();
         $this->_view();
     }
 
-    public function addAction()
+    // Validate input and save a product
+    private function validateAndSaveProduct($categoryId)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Sanitize and validate input
-            $product_name = $this->filterString($_POST['product_name'] ?? '');
-            $sku = $this->filterString($_POST['sku'] ?? '');
-            $description = $this->filterString($_POST['description'] ?? '');
-            $quantity = $this->filterInt($_POST['quantity'] ?? 0);
-            $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
+        $productName = $this->filterString($_POST['product_name'] ?? '');
+        $sku = $this->filterString($_POST['sku'] ?? $this->generateSku($categoryId));
+        $description = $this->filterString($_POST['description'] ?? '');
+        $quantity = $this->filterInt($_POST['quantity'] ?? 0);
+        $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
 
-            $categoryId = $this->filterInt($_POST['category_id'] ?? $_GET['category_id'] ?? null);
-
-            if (!$categoryId) {
-                $this->redirectWithAlert('error', '', "No category selected.");
-                return;
-            }
-
-            // Generate SKU if not provided
-            if (empty($sku)) {
-                $sku = $this->generateSku($categoryId);
-            }
-
-            if ($product_name && $sku && $unitPrice > 0 && $categoryId) {
-                $product = new productsModel();
-                $product->setName($product_name);
-                $product->setSku($sku);
-                $product->setDescription($description);
-                $product->setQuantity($quantity);
-                $product->setUnitPrice($unitPrice);
-                $product->setCategoryID($categoryId);
-
-                if ($product->save()) {
-                    $productId = $product->getProductId();
-
-                    // Save photo URLs in batch
-                    $photoUrls = array_filter([
-                        $this->filterString($_POST['photo_url1'] ?? ''),
-                        $this->filterString($_POST['photo_url2'] ?? '')
-                    ]);
-
-                    if (!empty($photoUrls)) {
-                        productPhotosModel::addPhotosToProduct($productId, $photoUrls);
-                    }
-
-                    $this->redirectWithAlert('add', '/products?category_id=' . "$categoryId", "Product added successfully.");
-                } else {
-                    $this->redirectWithAlert('error', '/products?category_id=' . "$categoryId", "Failed to add product.");
-                }
-            } else {
-                $this->redirectWithAlert('error', '/products?category_id=' . "$categoryId", "Invalid input. Please fill in all required fields.");
-            }
+        if (!$productName || !$sku || $unitPrice <= 0) {
+            return false;
         }
 
-        $currentCategoryId = $this->filterInt($_GET['category_id'] ?? null);
-        $this->_data['currentCategoryId'] = $currentCategoryId;
+        $product = new productsModel();
+        $product->setName($productName);
+        $product->setSku($sku);
+        $product->setDescription($description);
+        $product->setQuantity($quantity);
+        $product->setUnitPrice($unitPrice);
+        $product->setCategoryID($categoryId);
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $this->_view();
+        return $product->save() ? $product : false;
     }
 
-    public function editAction()
+    // Update product details
+    private function updateProductDetails($product, $categoryId)
     {
-        $productId = $this->filterInt($_GET['id'] ?? null);
+        $productName = $this->filterString($_POST['product_name'] ?? '');
+        $sku = $this->filterString($_POST['sku'] ?? '');
+        $description = $this->filterString($_POST['description'] ?? '');
+        $quantity = $this->filterInt($_POST['quantity'] ?? 0);
+        $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
 
-        if (!$productId) {
-            $this->redirectWithAlert('error', '', "Invalid product ID.");
-            return;
+        if (!$productName || !$sku || $unitPrice <= 0) {
+            return false;
         }
 
-        $product = productsModel::getByPK($productId);
+        $product->setName($productName);
+        $product->setSku($sku);
+        $product->setDescription($description);
+        $product->setQuantity($quantity);
+        $product->setUnitPrice($unitPrice);
+        $product->setCategoryID($categoryId);
 
-        if (!$product) {
-            $this->redirectWithAlert('error', '', "Product not found.");
-            return;
-        }
-
-        $currentCategoryId = $this->filterInt($_GET['category_id'] ?? $product->getCategoryID());
-        $productPhotos = productPhotosModel::getPhotosByProductId($productId);
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $product_name = $this->filterString($_POST['product_name'] ?? '');
-            $sku = $this->filterString($_POST['sku'] ?? '');
-            $description = $this->filterString($_POST['description'] ?? '');
-            $quantity = $this->filterInt($_POST['quantity'] ?? 0);
-            $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
-
-            if ($product_name && $sku && $unitPrice > 0) {
-                $product->setName($product_name);
-                $product->setSku($sku);
-                $product->setDescription($description);
-                $product->setQuantity($quantity);
-                $product->setUnitPrice($unitPrice);
-                $product->setCategoryID($currentCategoryId);
-
-                if ($product->save()) {
-                    $newPhotos = array_filter([$_POST['photo_url1'], $_POST['photo_url2']]);
-                    productPhotosModel::handlePhotoTransaction(function () use ($productId, $newPhotos) {
-                        productPhotosModel::deletePhotosByProductId($productId);
-                        return productPhotosModel::addPhotosToProduct($productId, $newPhotos);
-                    });
-
-                    $this->redirectWithAlert('success', '/products?category_id=' . $currentCategoryId, "Product updated successfully.");
-                } else {
-                    $this->redirectWithAlert('error', '/products?category_id=' . $currentCategoryId, "Failed to update product.");
-                }
-            } else {
-                $this->redirectWithAlert('error', '/products?category_id=' . $currentCategoryId, "Invalid input. Please fill in all required fields.");
-            }
-        }
-
-        $this->_data = [
-            'product' => $product,
-            'photos' => $productPhotos,
-            'currentCategoryId' => $currentCategoryId,
-        ];
-
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $this->_view();
+        return $product->save();
     }
 
-
-
-    private function updatePhotos($productId)
+    // Get photo URLs from POST data
+    private function getPhotoUrlsFromPost(): array
     {
-        // Delete old photos using the model's method
-        productPhotosModel::deletePhotosByProductId($productId);
-
-        // Add new photos using the new method
-        $photoUrls = array_filter([
+        return array_filter([
             $this->filterString($_POST['photo_url1'] ?? ''),
             $this->filterString($_POST['photo_url2'] ?? '')
         ]);
-
-        if (!empty($photoUrls)) {
-            productPhotosModel::addPhotosToProduct($productId, $photoUrls);
-        }
     }
 
-
-    public function deleteAction()
+    // Update product photos
+    private function updateProductPhotos($productId, array $newPhotos)
     {
-        $productId = $this->filterInt($_GET['id'] ?? null);
-
-        if (!$productId) {
-            $this->redirectWithAlert('error', '', 'Invalid product ID.');
-            return;
-        }
-
-        $product = productsModel::getByPK($productId);
-
-        if (!$product) {
-            $this->redirectWithAlert('error', '', 'Product not found.');
-            return;
-        }
-
-        $categoryId = $product->getCategoryID(); // Retrieve the category ID for redirection.
-
-        $redirectUrl = '/products' . ($categoryId ? '?category_id=' . $categoryId : '');
-        if ($product->deleteWithPhotos()) {
-            $this->redirectWithAlert('remove', $redirectUrl, 'Product and associated photos deleted successfully.');
-        } else {
-            $this->redirectWithAlert('error',  $redirectUrl, 'Failed to delete product or associated photos.');
-        }
+        productPhotosModel::handlePhotoTransaction(function () use ($productId, $newPhotos) {
+            productPhotosModel::deletePhotosByProductId($productId);
+            return productPhotosModel::addPhotosToProduct($productId, $newPhotos);
+        });
     }
 
-
-
-    private function generateSku($categoryId)
+    // Generate SKU
+    private function generateSku($categoryId): string
     {
         $categoryPrefix = $categoryId ? 'CAT-' . $categoryId : 'GEN';
         $uniqueId = strtoupper(substr(uniqid(), -5));
         return "{$categoryPrefix}-{$uniqueId}";
     }
+
     // Redirect with alert
-    private function redirectWithAlert(string $alertType, string $url, string $message)
+    private function redirectWithAlert(string $type, string $url, string $message)
     {
-        $this->alertHandler->redirectWithAlert($url, $alertType, $message);
+        $this->alertHandler->redirectWithAlert($url, $type, $message);
+    }
+
+    // Start session if not already started
+    private function startSessionIfNotStarted()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 }
