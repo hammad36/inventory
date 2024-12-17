@@ -2,11 +2,11 @@
 
 namespace inventory\models;
 
-use inventory\lib\inputFilter;
+use inventory\lib\InputFilter;
 
 class usersModel extends abstractModel
 {
-    use inputFilter;
+    use InputFilter;
 
     // Class Properties
     protected $user_id;

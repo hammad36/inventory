@@ -2,11 +2,11 @@
 
 namespace inventory\models;
 
-use inventory\lib\inputFilter;
+use inventory\lib\InputFilter;
 
 class stockAdjustmentsModel extends AbstractModel
 {
-    use inputFilter;
+    use InputFilter;
 
     // Properties
     protected $adjustment_id;

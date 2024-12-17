@@ -2,11 +2,11 @@
 
 namespace inventory\models;
 
-use inventory\lib\inputFilter;
+use inventory\lib\InputFilter;
 
 class categoriesModel extends abstractModel
 {
-    use inputFilter;
+    use InputFilter;
 
     protected $category_id;
     protected $name;

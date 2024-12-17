@@ -4,11 +4,11 @@ namespace inventory\models;
 
 use inventory\lib\alertHandler;
 use inventory\lib\database\databaseHandler;
-use inventory\lib\inputFilter;
+use inventory\lib\InputFilter;
 
 class productPhotosModel extends abstractModel
 {
-    use inputFilter;
+    use InputFilter;
 
     // Class properties
     protected $photo_id;

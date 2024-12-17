@@ -2,11 +2,11 @@
 
 namespace inventory\models;
 
-use inventory\lib\inputFilter;
+use inventory\lib\InputFilter;
 
 class activityLogsModel extends abstractModel
 {
-    use inputFilter;
+    use InputFilter;
 
     protected $log_id;
     protected $user_id;
