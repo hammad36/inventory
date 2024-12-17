@@ -8,6 +8,7 @@ use inventory\lib\alertHandler;
 use inventory\models\productsModel;
 use inventory\models\productPhotosModel;
 use inventory\models\categoriesModel;
+use inventory\models\StockAdjustmentsModel;
 
 class productsController extends abstractController
 {
@@ -26,7 +27,6 @@ class productsController extends abstractController
         $categoryId = $this->filterInt($_GET['category_id'] ?? null);
         $category = $categoryId ? categoriesModel::getByPK($categoryId) : null;
         $products = $this->getProducts($categoryId);
-
         $this->renderProductsView($products, $category);
     }
 
@@ -48,6 +48,9 @@ class productsController extends abstractController
                 // Handle product photos
                 $photoUrls = $this->getPhotoUrlsFromPost();
                 productPhotosModel::addPhotosToProduct($product->getProductId(), $photoUrls);
+
+                // Log the addition of the product
+                $this->logStockAdjustment('addProduct', $product->getProductId(), $product->getQuantity(), $_SESSION['user']['id'] ?? null);
 
                 $this->redirectWithAlert('add', "/products?category_id=$categoryId", "Product added successfully.");
             } else {
@@ -75,6 +78,7 @@ class productsController extends abstractController
             return;
         }
 
+        $oldQuantity = $product->getQuantity(); // Store the old quantity before changes
         $currentCategoryId = $this->filterInt($_GET['category_id'] ?? $product->getCategoryID());
         $productPhotos = productPhotosModel::getPhotosByProductId($productId);
 
@@ -83,9 +87,26 @@ class productsController extends abstractController
         $photoUrl2 = $productPhotos[1] ?? '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Capture input for debugging
+            $updatedQuantity = $this->filterInt($_POST['quantity'] ?? 0);
+
+            // Log for debugging
+            error_log("Old Quantity: $oldQuantity, Updated Quantity: $updatedQuantity");
+
             if ($this->updateProductDetails($product, $currentCategoryId)) {
                 $newPhotos = $this->getPhotoUrlsFromPost();
                 $this->updateProductPhotos($productId, $newPhotos);
+
+                // Re-fetch the product to ensure we get the latest quantity
+                $product = productsModel::getByPK($productId);
+                $newQuantity = $product->getQuantity();
+
+                // Log for debugging
+                error_log("New Quantity after save: $newQuantity");
+
+                if ($newQuantity !== 0) {
+                    $this->logStockAdjustment('editProduct', $product->getProductId(), $newQuantity, $_SESSION['user']['id'] ?? null);
+                }
 
                 $this->redirectWithAlert('success', "/products?category_id=$currentCategoryId", "Product updated successfully.");
             } else {
@@ -116,14 +137,31 @@ class productsController extends abstractController
         $categoryId = $product->getCategoryID();
         $redirectUrl = '/products' . ($categoryId ? "?category_id=$categoryId" : '');
 
+        // Log the removal of the product, passing the current quantity as a negative value
+
+        // Attempt to delete the product and its associated photos
         if ($product->deleteWithPhotos()) {
             $this->redirectWithAlert('remove', $redirectUrl, 'Product and associated photos deleted successfully.');
         } else {
             $this->redirectWithAlert('error', $redirectUrl, 'Failed to delete product or associated photos.');
         }
+        $this->_data['currentCategoryId'] = $this->filterInt($_GET['category_id'] ?? null);
+        $this->startSessionIfNotStarted();
     }
 
     // --- Private Utility Methods ---
+
+    // Log stock adjustments
+    private function logStockAdjustment(string $changeType, int $productId, int $quantityChange, ?int $userId = null): void
+    {
+        $adjustment = new StockAdjustmentsModel();
+        $adjustment->setProductId($productId);
+        $adjustment->setChangeType($changeType); // Track 'addProduct', 'editProduct', or 'deleteProduct'
+        $adjustment->setProductQuantityChange($quantityChange);
+        $adjustment->setUserId($userId);
+        $adjustment->setTimestamp(date('Y-m-d H:i:s')); // Record current timestamp
+        $adjustment->save();
+    }
 
     // Fetch products with their photos
     private function getProducts($categoryId)

@@ -4,7 +4,7 @@ namespace inventory\models;
 
 use inventory\lib\InputFilter;
 
-class stockAdjustmentsModel extends AbstractModel
+class StockAdjustmentsModel extends AbstractModel
 {
     use InputFilter;
 
@@ -32,33 +32,34 @@ class stockAdjustmentsModel extends AbstractModel
 
     protected static $primaryKey = 'adjustment_id';
 
-    // Methods to set related names dynamically
-    private function setProductNameFromId()
+    // Methods to dynamically set related data
+    private function setProductNameFromId(): void
     {
-        $product = productsModel::getByPK($this->product_id);
+        $product = ProductsModel::getByPK($this->product_id);
         $this->product_name = $product ? $product->getName() : 'Unknown Product';
     }
 
-    private function setUserNameFromId()
+    private function setUserNameFromId(): void
     {
-        $user = usersModel::getByPK($this->user_id);
+        $user = UsersModel::getByPK($this->user_id);
         $this->user_name = $user ? $user->getFullName() : 'Unknown User';
     }
 
     // Override save method to include product_name and user_name
     public function save(): bool
     {
-        if (isset($this->product_id)) {
-            $this->setProductNameFromId();
+        if (!isset($this->user_name)) {
+            $this->setUserNameFromId();
         }
 
-        if (isset($this->user_id)) {
-            $this->setUserNameFromId();
+        if (!isset($this->product_name)) {
+            $this->setProductNameFromId();
         }
 
         return parent::save();
     }
 
+    // Setters
     public function setProductId(int $product_id): void
     {
         $this->product_id = $this->filterInt($product_id);
@@ -66,10 +67,23 @@ class stockAdjustmentsModel extends AbstractModel
 
     public function setChangeType(string $change_type): void
     {
-        $validTypes = ['addition', 'reduction'];
+        $validTypes = [
+            'addition',
+            'reduction',
+            'addProduct',
+            'editProduct',
+            'deleteProduct',
+            'addCategory',
+            'editCategory',
+            'deleteCategory'
+        ];
+
         if (!in_array($change_type, $validTypes)) {
-            throw new \InvalidArgumentException("Invalid change type. Allowed values are: addition, reduction.");
+            throw new \InvalidArgumentException(
+                "Invalid change type. Allowed values are: " . implode(", ", $validTypes)
+            );
         }
+
         $this->change_type = $change_type;
     }
 
@@ -78,8 +92,19 @@ class stockAdjustmentsModel extends AbstractModel
         if ($quantity_change <= 0) {
             throw new \InvalidArgumentException("Quantity change must be a positive integer.");
         }
+
         $this->quantity_change = $this->filterInt($quantity_change);
     }
+
+    public function setProductQuantityChange(int $quantity_change): void
+    {
+        if ($quantity_change === 0) {
+            throw new \InvalidArgumentException("Quantity change cannot be zero.");
+        }
+
+        $this->quantity_change = $this->filterInt($quantity_change);
+    }
+
 
     public function setUserId(?int $user_id): void
     {
@@ -104,8 +129,7 @@ class stockAdjustmentsModel extends AbstractModel
 
     public function getProductName(): string
     {
-        $product = productsModel::getByPK($this->getProductId());
-        return $product ? $product->getName() : 'N/A';
+        return $this->product_name ?? 'N/A';
     }
 
     public function getChangeType(): string
@@ -125,13 +149,12 @@ class stockAdjustmentsModel extends AbstractModel
 
     public function getUserName(): string
     {
-        $user = usersModel::getByPK($this->getUserId());
-        return $user ? $user->getFullName() : 'N/A';
+        return $this->user_name ?? 'N/A';
     }
 
     public function getTimestamp(): string
     {
-        return $this->timestamp ?? date('Y-m-d H:i:s');
+        return $this->timestamp;
     }
 
     // Utility Methods
@@ -152,27 +175,20 @@ class stockAdjustmentsModel extends AbstractModel
      */
     public static function getFiltered(string $type): array
     {
-        $condition = '';
-        switch ($type) {
-            case 'daily':
-                $condition = "DATE(timestamp) = CURDATE()";
-                break;
-            case 'weekly':
-                $condition = "WEEK(timestamp, 1) = WEEK(CURDATE(), 1) AND YEAR(timestamp) = YEAR(CURDATE())";
-                break;
-            case 'monthly':
-                $condition = "MONTH(timestamp) = MONTH(CURDATE()) AND YEAR(timestamp) = YEAR(CURDATE())";
-                break;
-            case 'yearly':
-                $condition = "YEAR(timestamp) = YEAR(CURDATE())";
-                break;
-            default:
-                return [];
-        }
+        $condition = match ($type) {
+            'daily'   => "DATE(timestamp) = CURDATE()",
+            'weekly'  => "WEEK(timestamp, 1) = WEEK(CURDATE(), 1) AND YEAR(timestamp) = YEAR(CURDATE())",
+            'monthly' => "MONTH(timestamp) = MONTH(CURDATE()) AND YEAR(timestamp) = YEAR(CURDATE())",
+            'yearly'  => "YEAR(timestamp) = YEAR(CURDATE())",
+            default   => '',
+        };
+
+        if (!$condition) return [];
 
         $sql = "SELECT * FROM stock_adjustments WHERE $condition";
         $stmt = self::getConnection()->prepare($sql);
         $stmt->execute();
+
         return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
 
@@ -205,6 +221,7 @@ class stockAdjustmentsModel extends AbstractModel
         $stmt = self::getConnection()->prepare($sql);
         $stmt->bindValue(':limit', $limit, self::DATA_TYPE_INT);
         $stmt->execute();
+
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -223,6 +240,7 @@ class stockAdjustmentsModel extends AbstractModel
         $stmt = self::getConnection()->prepare($sql);
         $stmt->bindValue(':category_id', $categoryId, self::DATA_TYPE_INT);
         $stmt->execute();
+
         return $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
     }
 }

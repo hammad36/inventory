@@ -59,7 +59,7 @@ endif
                                     <?php elseif ($adjustment->getChangeType() === 'reduction'): ?>
                                         text-red-600
                                     <?php else: ?>
-                                        text-gray-800
+                                        text-blue-800
                                     <?php endif; ?>">
                                     <?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?>
                                 </td>
