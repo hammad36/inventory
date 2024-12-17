@@ -55,11 +55,11 @@ endif
                                 <td class="px-6 py-4 text-gray-800 font-medium"><?= htmlspecialchars($adjustment->getProductName()) ?></td>
                                 <td class="px-6 py-4 font-medium 
                                     <?php if ($adjustment->getChangeType() === 'addition'): ?>
-                                        text-green-800
+                                        text-green-800 font-light
                                     <?php elseif ($adjustment->getChangeType() === 'reduction'): ?>
-                                        text-red-600
+                                        text-red-600 font-light
                                     <?php else: ?>
-                                        text-blue-800
+                                        text-blue-800 font-extrabold bg-blue-50
                                     <?php endif; ?>">
                                     <?= htmlspecialchars($adjustment->getChangeType() ?? 'N/A') ?>
                                 </td>
