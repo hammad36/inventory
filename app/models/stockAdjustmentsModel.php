@@ -11,34 +11,54 @@ class stockAdjustmentsModel extends AbstractModel
     // Properties
     protected $adjustment_id;
     protected $product_id;
+    protected $product_name;
     protected $change_type;
     protected $quantity_change;
     protected $user_id;
+    protected $user_name;
     protected $timestamp;
 
     // Table and Schema
     protected static $tableName = 'stock_adjustments';
     protected static $tableSchema = [
         'product_id'       => self::DATA_TYPE_INT,
+        'product_name'     => self::DATA_TYPE_STR,
         'change_type'      => self::DATA_TYPE_STR,
         'quantity_change'  => self::DATA_TYPE_INT,
         'user_id'          => self::DATA_TYPE_INT,
-        'timestamp'        => self::DATA_TYPE_TIMESTAMP,
+        'user_name'        => self::DATA_TYPE_STR,
+        'timestamp'        => self::DATA_TYPE_DATE,
     ];
 
     protected static $primaryKey = 'adjustment_id';
 
-    // Data Types
-    const DATA_TYPE_BOOL    = \PDO::PARAM_BOOL;
-    const DATA_TYPE_STR     = \PDO::PARAM_STR;
-    const DATA_TYPE_INT     = \PDO::PARAM_INT;
-    const DATA_TYPE_DECIMAL = 4;
-    const DATA_TYPE_DATE    = \PDO::PARAM_STR;
-    const DATA_TYPE_NULL    = \PDO::PARAM_NULL;
-    const DATA_TYPE_ENUM    = 'enum';
-    const DATA_TYPE_TIMESTAMP = \PDO::PARAM_STR;
+    // Methods to set related names dynamically
+    private function setProductNameFromId()
+    {
+        $product = productsModel::getByPK($this->product_id);
+        $this->product_name = $product ? $product->getName() : 'Unknown Product';
+    }
 
-    // Setters with Validation
+    private function setUserNameFromId()
+    {
+        $user = usersModel::getByPK($this->user_id);
+        $this->user_name = $user ? $user->getFullName() : 'Unknown User';
+    }
+
+    // Override save method to include product_name and user_name
+    public function save(): bool
+    {
+        if (isset($this->product_id)) {
+            $this->setProductNameFromId();
+        }
+
+        if (isset($this->user_id)) {
+            $this->setUserNameFromId();
+        }
+
+        return parent::save();
+    }
+
     public function setProductId(int $product_id): void
     {
         $this->product_id = $this->filterInt($product_id);
