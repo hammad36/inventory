@@ -2,11 +2,11 @@
 
 namespace inventory\models;
 
-use inventory\lib\InputFilter;
+use inventory\lib\inputFilter;
 
 class messagesModel extends abstractModel
 {
-    use InputFilter;
+    use inputFilter;
 
     protected $message_id;
     protected $name;

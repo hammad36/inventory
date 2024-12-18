@@ -2,21 +2,21 @@
 
 namespace inventory\controllers;
 
-use inventory\lib\AlertHandler;
+use inventory\lib\alertHandler;
 use inventory\models\UsersModel;
 use Exception;
 use DateTime;
 
 class IndexController extends AbstractController
 {
-    private AlertHandler $alertHandler;
+    private alertHandler $alertHandler;
     private const MIN_PASSWORD_LENGTH = 12;
     private const MAX_PASSWORD_LENGTH = 64;
     private const MIN_AGE = 13;
 
     public function __construct()
     {
-        $this->alertHandler = AlertHandler::getInstance();
+        $this->alertHandler = alertHandler::getInstance();
     }
 
     public function registrationAction(): void

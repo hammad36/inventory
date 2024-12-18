@@ -4,7 +4,7 @@ namespace inventory\controllers;
 
 use DateTime;
 use inventory\controllers\abstractController;
-use inventory\lib\InputFilter;
+use inventory\lib\inputFilter;
 use inventory\lib\alertHandler;
 use inventory\models\categoriesModel;
 use inventory\models\productPhotosModel;
@@ -13,7 +13,7 @@ use inventory\models\stockAdjustmentsModel;
 
 class categoriesController extends abstractController
 {
-    use InputFilter;
+    use inputFilter;
 
     private $alertHandler;
 

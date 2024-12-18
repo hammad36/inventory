@@ -14,9 +14,9 @@
     <div class="relative my-12 z-20 mx-auto px-6 lg:px-8">
         <?php
 
-        use inventory\lib\AlertHandler;
+        use inventory\lib\alertHandler;
 
-        $alertHandler = AlertHandler::getInstance();
+        $alertHandler = alertHandler::getInstance();
         $alertHandler->handleAlert();
         ?>
 

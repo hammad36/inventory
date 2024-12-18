@@ -4,7 +4,7 @@ namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
 use inventory\models\productsModel;
-use inventory\models\StockAdjustmentsModel;
+use inventory\models\stockAdjustmentsModel;
 
 class stockAdjustmentsController extends abstractController
 {
@@ -15,7 +15,7 @@ class stockAdjustmentsController extends abstractController
         }
 
         // Fetch stock adjustments from the database
-        $stockAdjustments = StockAdjustmentsModel::getAll();
+        $stockAdjustments = stockAdjustmentsModel::getAll();
 
         // Pass data to the view
         $this->_data['stockAdjustments'] = $stockAdjustments;

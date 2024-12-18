@@ -3,16 +3,16 @@
 namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
-use inventory\lib\InputFilter;
+use inventory\lib\inputFilter;
 use inventory\lib\alertHandler;
 use inventory\models\productsModel;
 use inventory\models\productPhotosModel;
 use inventory\models\categoriesModel;
-use inventory\models\StockAdjustmentsModel;
+use inventory\models\stockAdjustmentsModel;
 
 class productsController extends abstractController
 {
-    use InputFilter;
+    use inputFilter;
 
     private $alertHandler;
 
@@ -154,7 +154,7 @@ class productsController extends abstractController
     // Log stock adjustments
     private function logStockAdjustment(string $changeType, int $productId, int $quantityChange, ?int $userId = null): void
     {
-        $adjustment = new StockAdjustmentsModel();
+        $adjustment = new stockAdjustmentsModel();
         $adjustment->setProductId($productId);
         $adjustment->setChangeType($changeType); // Track 'addProduct', 'editProduct', or 'deleteProduct'
         $adjustment->setProductQuantityChange($quantityChange);

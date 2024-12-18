@@ -4,12 +4,12 @@ namespace inventory\controllers;
 
 use inventory\controllers\abstractController;
 use inventory\lib\alertHandler;
-use inventory\lib\InputFilter;
+use inventory\lib\inputFilter;
 use inventory\models\messagesModel;
 
 class aboutController extends abstractController
 {
-    use InputFilter;
+    use inputFilter;
 
     private $alertHandler;
 

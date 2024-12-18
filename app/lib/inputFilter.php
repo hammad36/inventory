@@ -4,7 +4,7 @@ namespace inventory\lib;
 
 use DateTime;
 
-trait InputFilter
+trait inputFilter
 {
     private function applyFilter($input, int $filter, callable $validate): mixed
     {
