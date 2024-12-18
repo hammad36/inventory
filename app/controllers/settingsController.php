@@ -128,11 +128,104 @@ class settingsController extends abstractController
 
     public function changePasswordAction()
     {
+        // Ensure session is started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
+        // Check if user is logged in
+        if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
+            $this->redirectWithAlert('error', '/login', 'Please log in to change your password.');
+            exit;
+        }
+
+        // Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                // Get user data
+                $user = usersModel::getByPK($_SESSION['user']['id']);
+                if (!$user) {
+                    throw new \Exception('User not found.');
+                }
+
+                // Validate and sanitize inputs
+                $currentPassword = $this->filterString($_POST['current_password'] ?? '');
+                $newPassword = $this->filterString($_POST['new_password'] ?? '');
+                $confirmPassword = $this->filterString($_POST['confirm_new_password'] ?? '');
+
+                // Check if all fields are filled
+                if (!$currentPassword || !$newPassword || !$confirmPassword) {
+                    throw new \Exception('All password fields are required.');
+                }
+
+                // Verify current password using password_verify()
+                if (!password_verify($currentPassword, $user->getPassword())) {
+                    throw new \Exception('Current password is incorrect.');
+                }
+
+                // Validate new password matches confirmation
+                if ($newPassword !== $confirmPassword) {
+                    throw new \Exception('New passwords do not match.');
+                }
+
+                // Prevent reusing the same password
+                if ($currentPassword === $newPassword) {
+                    throw new \Exception('New password must be different from current password.');
+                }
+
+                // Validate password strength
+                $this->validatePasswordStrength($newPassword);
+
+                // Update user password - the model will handle the hashing
+                $user->setPassword($newPassword);
+                $user->save();
+
+                // Regenerate session ID for security
+                session_regenerate_id(true);
+
+                $this->redirectWithAlert('success', '/settings/changePassword', 'Password changed successfully! Please use your new password next time you log in.');
+            } catch (\Exception $e) {
+                $this->redirectWithAlert('error', '/settings/changePassword', $e->getMessage());
+            }
+        }
+
+        // Display the view
         $this->_view();
+    }
+
+    /**
+     * Validates password strength against requirements
+     * 
+     * @param string $password
+     * @throws \Exception if password doesn't meet requirements
+     */
+    private function validatePasswordStrength(string $password): void
+    {
+        $errors = [];
+
+        if (strlen($password) < 8) {
+            $errors[] = 'Password must be at least 8 characters long';
+        }
+
+        if (!preg_match('/[A-Z]/', $password)) {
+            $errors[] = 'Password must contain at least one uppercase letter';
+        }
+
+        if (!preg_match('/[a-z]/', $password)) {
+            $errors[] = 'Password must contain at least one lowercase letter';
+        }
+
+        if (!preg_match('/[0-9]/', $password)) {
+            $errors[] = 'Password must contain at least one number';
+        }
+
+        if (!preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password)) {
+            $errors[] = 'Password must contain at least one special character';
+        }
+
+        if (!empty($errors)) {
+            throw new \Exception(implode('. ', $errors));
+        }
     }
 
     public function termsAction()

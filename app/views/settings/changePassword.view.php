@@ -15,11 +15,18 @@
 
         <!-- Password Change Form -->
         <form
-            action="/settings/password/update"
+            action="/settings/changePassword"
             method="POST"
             class="p-6 space-y-6"
             id="password-change-form"
             onsubmit="return validatePasswordForm()">
+            <?php
+
+            use inventory\lib\alertHandler;
+
+            $alertHandler = alertHandler::getInstance();
+            $alertHandler->handleAlert();
+            ?>
             <!-- Current Password -->
             <div>
                 <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
