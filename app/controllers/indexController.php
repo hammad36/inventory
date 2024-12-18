@@ -134,6 +134,8 @@ class IndexController extends AbstractController
 
         $_SESSION['user'] = [
             'id' => $user->getUserID(),
+            'first_name' => $user->getFirstName(),
+            'last_name' => $user->getLastName(),
             'name' => $user->getFullName(),
             'email' => $user->getEmail(),
             'date_of_birth' => $user->getDateOfBirth(),
