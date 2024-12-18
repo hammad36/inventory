@@ -104,11 +104,6 @@
 
         <!-- Action Buttons -->
         <div class="p-6 bg-gray-100 flex justify-between items-center">
-            <a
-                href="/privacy-policy"
-                class="text-blue-600 hover:text-blue-800 transition">
-                View Full Privacy Policy
-            </a>
             <button
                 id="accept-terms"
                 class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"

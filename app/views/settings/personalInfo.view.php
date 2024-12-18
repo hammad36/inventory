@@ -15,31 +15,14 @@
 
         <!-- Profile Form -->
         <form action="/settings/personalInfo" method="POST" class="p-6 space-y-6">
-            <!-- Profile Picture Section -->
-            <div class="flex items-center space-x-6">
-                <div class="flex-shrink-0">
-                    <img
-                        src="<?php echo htmlspecialchars($user->getProfilePicture() ?: '/default-avatar.png'); ?>"
-                        alt="Profile Picture"
-                        class="h-20 w-20 rounded-full object-cover border-4 border-blue-500">
-                </div>
-                <div>
-                    <label class="block">
-                        <span class="sr-only">Choose profile photo</span>
-                        <input
-                            type="file"
-                            name="profile_picture"
-                            class="block w-full text-sm text-gray-500 
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-blue-50 file:text-blue-700
-                            hover:file:bg-blue-100" />
-                    </label>
-                    <p class="text-xs text-gray-500 mt-2">JPG or PNG. Max size 5MB.</p>
-                </div>
-            </div>
 
+            <?php
+
+            use inventory\lib\alertHandler;
+
+            $alertHandler = alertHandler::getInstance();
+            $alertHandler->handleAlert();
+            ?>
             <!-- Personal Details Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- First Name -->
@@ -115,21 +98,16 @@
                         <span class="text-gray-500">Member Since:</span>
                         <p class="font-medium"><?php echo htmlspecialchars($user->getCreatedAt()); ?></p>
                     </div>
-                    <div>
-                        <span class="text-gray-500">Last Updated:</span>
-                        <p class="font-medium"><?php echo htmlspecialchars($user->getLastUpdated()); ?></p>
-                    </div>
                 </div>
-            </div>
 
-            <!-- Save Button -->
-            <div class="flex justify-end">
-                <button
-                    type="submit"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    Save Changes
-                </button>
-            </div>
+                <!-- Save Button -->
+                <div class="flex justify-end">
+                    <button
+                        type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Save Changes
+                    </button>
+                </div>
         </form>
     </div>
 </main>

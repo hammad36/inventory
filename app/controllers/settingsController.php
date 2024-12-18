@@ -20,25 +20,109 @@ class settingsController extends abstractController
 
     public function defaultAction()
     {
-        // Fetch user data, e.g., from the session or database
-        $user = usersModel::getByPK($_SESSION['user']['id']);
-
-        if (!$user) {
-            // Handle the case where the user data isn't found
-            die("User not found.");
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
-
-        // Pass the user data to the view
-        $this->_data['user'] = $user;
 
         $this->_view();
     }
     public function personalInfoAction()
     {
+        // Ensure session is started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
+        // Check if user is logged in
+        if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
+            $this->redirectWithAlert('error', '/login', 'Please log in to access settings.');
+            exit;
+        }
+
+        // Fetch user data
+        $user = usersModel::getByPK($_SESSION['user']['id']);
+        if (!$user) {
+            $this->redirectWithAlert('error', '/login', 'User not found.');
+            exit;
+        }
+
+        // Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                // Filter and validate inputs using inputFilter trait methods
+                $firstName = $this->filterString($_POST['first_name'] ?? '');
+                $lastName = $this->filterString($_POST['last_name'] ?? '');
+                $email = $this->filterEmail($_POST['email'] ?? '');
+                $dateOfBirth = $this->filterDate($_POST['date_of_birth'] ?? '');
+                $gender = $this->filterString($_POST['gender'] ?? '', 1, 10);
+
+                // Check if any validation failed
+                if (!$firstName || !$lastName || !$email || !$dateOfBirth || !$gender) {
+                    throw new \Exception('Please fill in all fields correctly.');
+                }
+
+                // Validate gender options
+                if (!in_array($gender, ['Male', 'Female', 'Other'])) {
+                    throw new \Exception('Invalid gender option selected.');
+                }
+
+                // Check if email is already taken by another user
+                $existingUser = usersModel::findByEmail($email);
+                if ($existingUser && $existingUser->getUserID() !== $user->getUserID()) {
+                    throw new \Exception('Email address is already in use.');
+                }
+
+                // Validate age (must be at least 13 years old)
+                if (!$this->validAge($dateOfBirth, 13)) {
+                    throw new \Exception('You must be at least 13 years old.');
+                }
+
+                // Update user data
+                $user->setFirstName($firstName);
+                $user->setLastName($lastName);
+                $user->setEmail($email);
+                $user->setDateOfBirth($dateOfBirth);
+                $user->setGender($gender);
+                $user->save();
+
+                // Store current session data we want to keep
+                $keepData = [
+                    'user_id' => $_SESSION['user']['id'],
+                    // Add any other session data you need to preserve
+                ];
+
+                // Clear session data
+                $_SESSION = array();
+
+                // Regenerate session ID
+                session_regenerate_id(true);
+
+                // Restore necessary session data
+                $_SESSION['user'] = [
+                    'id' => $user->getUserID(),
+                    'first_name' => $user->getFirstName(),
+                    'last_name' => $user->getLastName(),
+                    'name' => $user->getFullName(),
+                    'email' => $user->getEmail(),
+                    'date_of_birth' => $user->getDateOfBirth(),
+                    'gender' => $user->getGender(),
+                    'role' => $user->getRole(),
+                    'status' => $user->getStatus(),
+                    'created_at' => $user->getCreatedAt(),
+                    'updated_at' => $user->getUpdatedAt(),
+                ];
+
+                // Merge back any additional data we kept
+                $_SESSION = array_merge($_SESSION, ['kept_data' => $keepData]);
+
+                $this->redirectWithAlert('success', '/settings/personalInfo', 'Personal information updated successfully!');
+            } catch (\Exception $e) {
+                $this->redirectWithAlert('error', '/settings/personalInfo', $e->getMessage());
+            }
+        }
+
+        // Pass data to view and render
+        $this->_data['user'] = $user;
         $this->_view();
     }
 
@@ -59,59 +143,13 @@ class settingsController extends abstractController
 
         $this->_view();
     }
-
-    public function editAction()
+    public function privacySettingsAction()
     {
-        // Ensure session is started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        $userId = $_SESSION['user']['user_id'] ?? null;
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId) {
-            // Fetch user data
-            $user = usersModel::getByPK($userId);
-            if (!$user) {
-                $this->redirectWithAlert('error', '/login', 'User not found.');
-                exit;
-            }
-
-            // Sanitize and validate inputs
-            $first_name = $this->filterString($_POST['first_name']);
-            $last_name = $this->filterString($_POST['last_name']);
-            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-            $date_of_birth = $_POST['date_of_birth'];
-            $gender = $this->filterString($_POST['gender']);
-
-            // Validate required fields
-            if (empty($first_name) || empty($last_name) || empty($email) || empty($date_of_birth) || empty($gender)) {
-                $this->redirectWithAlert('error', '/settings', 'All fields are required.');
-                exit;
-            }
-
-            // Validate email format
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $this->redirectWithAlert('error', '/settings', 'Invalid email format.');
-                exit;
-            }
-
-            // Update user data
-            try {
-                $user->setFirstName($first_name);
-                $user->setLastName($last_name);
-                $user->setEmail($email);
-                $user->setDateOfBirth($date_of_birth);
-                $user->setGender($gender);
-                $user->save();
-
-                $this->redirectWithAlert('success', '/settings', 'settings updated successfully!');
-            } catch (\Exception $e) {
-                $this->redirectWithAlert('error', '/settings', $e->getMessage());
-            }
-        } else {
-            $this->redirectWithAlert('error', '/login', 'Unauthorized access.');
-        }
+        $this->_view();
     }
 
     private function redirectWithAlert(string $type, string $url, string $message): void
