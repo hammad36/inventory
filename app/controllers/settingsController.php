@@ -238,11 +238,48 @@ class settingsController extends abstractController
     }
     public function privacySettingsAction()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        try {
+            // Ensure session is started
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
 
-        $this->_view();
+            // Check if the user is logged in
+            if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
+                $this->redirectWithAlert('error', '/login', 'Please login to access privacy settings.');
+                exit;
+            }
+
+            // Handle account deletion request
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
+                // Fetch user data
+                $userId = (int)$_SESSION['user']['id'];
+                $user = usersModel::getByPK($userId);
+
+                if (!$user) {
+                    throw new \Exception('User not found. Unable to delete account.');
+                }
+
+                // Delete user from database
+                if (!$user->delete()) {
+                    throw new \Exception('Failed to delete account. Please try again later.');
+                }
+
+                // Clear session and destroy it
+                session_unset();
+                session_destroy();
+
+                // Redirect with success message
+                $this->redirectWithAlert('remove', '/index', 'Your account has been successfully deleted.');
+                exit;
+            }
+
+            // Display the privacy settings view
+            $this->_view();
+        } catch (\Exception $e) {
+            // Redirect with error message
+            $this->redirectWithAlert('error', '/settings/privacySettings', $e->getMessage());
+        }
     }
 
     private function redirectWithAlert(string $type, string $url, string $message): void
