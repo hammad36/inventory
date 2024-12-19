@@ -1,4 +1,5 @@
 <main class="container mx-auto px-4 py-8 max-w-2xl">
+
     <div class="bg-white shadow-xl rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="bg-blue-600 text-white p-6 flex items-center justify-between">

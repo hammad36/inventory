@@ -1,4 +1,4 @@
-<main class="container mx-auto px-4 py-8 max-w-2xl">
+<main class="min-h-[calc(101.1vh-8rem)] container mx-auto px-4 py-8 max-w-2xl">
     <div class="bg-white shadow-xl rounded-lg overflow-hidden">
         <div class="bg-blue-600 text-white p-6">
             <h1 class="text-2xl font-bold">Account settings</h1>

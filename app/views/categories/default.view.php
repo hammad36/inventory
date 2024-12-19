@@ -12,7 +12,7 @@
     <?php endif; ?>
 
 
-    <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="relative z-20 mt-20 mx-auto max-w-7xl px-6 lg:px-8">
 
         <div class="text-center my-10">
             <h1 class="text-4xl font-extrabold tracking-tight text-blue-700 sm:text-6xl">
