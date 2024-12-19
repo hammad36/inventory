@@ -96,10 +96,6 @@ class usersModel extends abstractModel
         $this->status = $status;
     }
 
-    public function setLastLogin($lastLogin = null)
-    {
-        $this->last_login = $lastLogin ? $this->filterDate($lastLogin) : null;
-    }
 
     public function setPassword($password)
     {
@@ -108,10 +104,6 @@ class usersModel extends abstractModel
         }
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
-
-
-
-
 
     public function setCreatedAt($createdAt)
     {

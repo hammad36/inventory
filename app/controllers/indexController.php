@@ -3,16 +3,21 @@
 namespace inventory\controllers;
 
 use inventory\lib\alertHandler;
+use inventory\lib\inputFilter;
 use inventory\models\UsersModel;
 use Exception;
-use DateTime;
 
 class IndexController extends AbstractController
 {
+    use inputFilter;
+
     private alertHandler $alertHandler;
+
     private const MIN_PASSWORD_LENGTH = 12;
     private const MAX_PASSWORD_LENGTH = 64;
     private const MIN_AGE = 13;
+    private const VALID_GENDERS = ['Male', 'Female'];
+    private const VALID_ROLES = ['user', 'admin'];
 
     public function __construct()
     {
@@ -34,9 +39,21 @@ class IndexController extends AbstractController
         try {
             $inputs = $_POST;
 
-            $this->validateRequiredFields($inputs, ['first_name', 'last_name', 'email', 'password', 'confirm_password', 'date_of_birth', 'gender', 'role']);
+            $filteredInputs = $this->filterAndValidateInputs($inputs, [
+                'first_name' => fn($value) => $this->filterString($value, 2, 50),
+                'last_name' => fn($value) => $this->filterString($value, 2, 50),
+                'email' => fn($value) => $this->filterEmail($value),
+                'password' => fn($value) => $value,
+                'confirm_password' => fn($value) => $value,
+                'date_of_birth' => fn($value) => $this->filterDate($value),
+                'gender' => fn($value) => $this->validateGender($value),
+                'role' => fn($value) => $this->validateRole($value),
+            ]);
 
-            $user = $this->createUserFromInputs($inputs);
+            $this->validatePassword($filteredInputs['password'], $filteredInputs['confirm_password']);
+            $this->validateAge($filteredInputs['date_of_birth']);
+
+            $user = $this->createUserFromInputs($filteredInputs);
             $user->setStatus('active');
 
             if ($user->save()) {
@@ -49,13 +66,53 @@ class IndexController extends AbstractController
         }
     }
 
-    private function validateRequiredFields(array $inputs, array $requiredFields): void
+    private function filterAndValidateInputs(array $inputs, array $validators): array
     {
-        foreach ($requiredFields as $field) {
-            if (empty($inputs[$field])) {
-                throw new Exception("The {$field} field is required.");
+        $filteredInputs = [];
+        foreach ($validators as $field => $validator) {
+            $value = $inputs[$field] ?? null;
+            $filtered = $validator($value);
+            if ($filtered === null || $filtered === '') {
+                throw new Exception("The {$field} field is invalid or missing.");
             }
+            $filteredInputs[$field] = $filtered;
         }
+        return $filteredInputs;
+    }
+
+    private function validatePassword(string $password, string $confirmPassword): void
+    {
+        if (strlen($password) < self::MIN_PASSWORD_LENGTH || strlen($password) > self::MAX_PASSWORD_LENGTH) {
+            throw new Exception('Password must be between 12 and 64 characters.');
+        }
+
+        if ($password !== $confirmPassword) {
+            throw new Exception('Passwords do not match.');
+        }
+    }
+
+    private function validateAge(string $dateOfBirth): void
+    {
+        if (!$this->validAge($dateOfBirth, self::MIN_AGE)) {
+            throw new Exception('You must be at least 13 years old to register.');
+        }
+    }
+
+    private function validateGender(string $gender): string
+    {
+        $gender = ucfirst(strtolower($gender));
+        if (!in_array($gender, self::VALID_GENDERS)) {
+            throw new Exception("Invalid gender. Allowed values: " . implode(', ', self::VALID_GENDERS) . '.');
+        }
+        return $gender;
+    }
+
+    private function validateRole(string $role): string
+    {
+        if (!in_array($role, self::VALID_ROLES)) {
+            throw new Exception("Invalid role. Allowed values: " . implode(', ', self::VALID_ROLES) . '.');
+        }
+        return $role;
     }
 
     private function createUserFromInputs(array $inputs): UsersModel
@@ -77,13 +134,14 @@ class IndexController extends AbstractController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        session_regenerate_id(true);
     }
 
     private function redirectWithAlert(string $type, string $url, string $message): void
     {
         $this->alertHandler->redirectWithAlert($url, $type, $message);
     }
-    private function redirectONly(string $url)
+    private function redirectOnly(string $url): void
     {
         $this->alertHandler->redirectOnly($url);
     }
@@ -101,11 +159,11 @@ class IndexController extends AbstractController
     private function handleLogin(): void
     {
         try {
-            $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
+            $email = $this->filterEmail($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
 
             if (!$email || !$password) {
-                throw new Exception('Invalid email or password.');
+                throw new Exception('Email and password are required.');
             }
 
             $user = UsersModel::findByEmail($email);
@@ -121,7 +179,6 @@ class IndexController extends AbstractController
             $user->updateLastLogin();
             $this->initializeUserSession($user);
             $this->redirectOnly('/home');
-            $this->redirectWithAlert('success', '/home', 'Welcome back!');
         } catch (Exception $e) {
             $this->redirectWithAlert('error', '/index', $e->getMessage());
         }
@@ -130,8 +187,6 @@ class IndexController extends AbstractController
     private function initializeUserSession(UsersModel $user): void
     {
         $this->initializeSession();
-        session_regenerate_id(true);
-
         $_SESSION['user'] = [
             'id' => $user->getUserID(),
             'first_name' => $user->getFirstName(),

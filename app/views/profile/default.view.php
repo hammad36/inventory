@@ -1,5 +1,5 @@
 <main class="flex-grow container mx-auto py-6 min-h-[calc(101.1vh-8rem)]">
-    <section class="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-10 transform transition hover:scale-110 duration-300">
+    <section class="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-10 ">
         <div class="flex flex-col items-center">
 
 

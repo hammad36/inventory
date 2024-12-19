@@ -28,7 +28,7 @@ class productsModel extends abstractModel
         'sku'          => self::DATA_TYPE_STR,
         'description'  => self::DATA_TYPE_STR,
         'quantity'     => self::DATA_TYPE_INT,
-        'unit_price'   => self::DATA_TYPE_DECIMAL,
+        'unit_price'   => self::DATA_TYPE_INT,
         'category_id'  => self::DATA_TYPE_INT,
         'created_at'   => self::DATA_TYPE_DATE,
         'updated_at'   => self::DATA_TYPE_DATE,
@@ -108,7 +108,7 @@ class productsModel extends abstractModel
         $this->quantity = $quantity;
     }
 
-    public function setUnitPrice(float $unit_price): void
+    public function setUnitPrice(int $unit_price): void
     {
         $this->unit_price = $unit_price;
     }

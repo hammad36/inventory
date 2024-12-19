@@ -193,7 +193,7 @@ class productsController extends abstractController
         $sku = $this->filterString($_POST['sku'] ?? $this->generateSku($categoryId));
         $description = $this->filterString($_POST['description'] ?? '');
         $quantity = $this->filterInt($_POST['quantity'] ?? 0);
-        $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
+        $unitPrice = $this->filterInt($_POST['unit_price'] ?? 0);
 
         if (!$productName || !$sku || $unitPrice <= 0) {
             return false;
@@ -217,7 +217,7 @@ class productsController extends abstractController
         $sku = $this->filterString($_POST['sku'] ?? '');
         $description = $this->filterString($_POST['description'] ?? '');
         $quantity = $this->filterInt($_POST['quantity'] ?? 0);
-        $unitPrice = $this->filterFloat($_POST['unit_price'] ?? 0.0);
+        $unitPrice = $this->filterInt($_POST['unit_price'] ?? 0);
 
         if (!$productName || !$sku || $unitPrice <= 0) {
             return false;

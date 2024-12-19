@@ -83,6 +83,7 @@ class settingsController extends abstractController
                 $user->setEmail($email);
                 $user->setDateOfBirth($dateOfBirth);
                 $user->setGender($gender);
+                $user->setUpdatedAt(date('Y-m-d H:i:s'));
                 $user->save();
 
                 // Store current session data we want to keep
@@ -178,6 +179,7 @@ class settingsController extends abstractController
 
                 // Update user password - the model will handle the hashing
                 $user->setPassword($newPassword);
+                $user->setUpdatedAt(date('Y-m-d H:i:s'));
                 $user->save();
 
                 // Regenerate session ID for security
@@ -193,12 +195,8 @@ class settingsController extends abstractController
         $this->_view();
     }
 
-    /**
-     * Validates password strength against requirements
-     * 
-     * @param string $password
-     * @throws \Exception if password doesn't meet requirements
-     */
+    //Validates password strength against requirements
+
     private function validatePasswordStrength(string $password): void
     {
         $errors = [];
@@ -285,5 +283,9 @@ class settingsController extends abstractController
     private function redirectWithAlert(string $type, string $url, string $message): void
     {
         $this->alertHandler->redirectWithAlert($url, $type, $message);
+    }
+    private function redirectOnly(string $url): void
+    {
+        $this->alertHandler->redirectOnly($url);
     }
 }

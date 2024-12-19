@@ -15,6 +15,13 @@
     <div class="relative my-12 z-20 mx-auto px-6 lg:px-8">
         <!-- Form Container -->
         <div class="w-full max-w-3xl bg-white my-16 p-8 rounded-lg shadow-xl dark:border dark:border-gray-700 sm:max-w-xl xl:p-10 dark:bg-gray-900">
+            <?php
+
+            use inventory\lib\alertHandler;
+
+            $alertHandler = alertHandler::getInstance();
+            $alertHandler->handleAlert();
+            ?>
             <h2 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">Create Your Account</h2>
             <p class="text-center text-gray-600 dark:text-gray-400 mb-6">
                 Join us and start managing your inventory effortlessly!
