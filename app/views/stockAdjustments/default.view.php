@@ -1,8 +1,10 @@
 <?php
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin'): ?>
+if (!isset($_SESSION['user'])): ?>
     <div class="relative z-20 mx-auto max-w-7xl py-40 px-6 lg:px-8">
         <div class="text-center my-10">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl"> Restricted to Administrators </h1>
+            <p class="mt-4 text-xl text-gray-600">
+                Please <a href="/index" class="text-blue-600 hover:text-blue-800">sign in</a> to access this page
+            </p>
         </div>
     </div>
 <?php

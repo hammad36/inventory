@@ -1,3 +1,16 @@
+<?php
+if (!isset($_SESSION['user'])): ?>
+    <div class="relative z-20 mx-auto max-w-7xl py-40 px-6 lg:px-8">
+        <div class="text-center my-10">
+            <p class="mt-4 text-xl text-gray-600">
+                Please <a href="/index" class="text-blue-600 hover:text-blue-800">sign in</a> to access this page
+            </p>
+        </div>
+    </div>
+<?php
+    exit;
+endif
+?>
 <section class="relative overflow-hidden min-h-[calc(101.1vh-8rem)] bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12  sm:pb-16 lg:pb-24 xl:pb-28">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
 
