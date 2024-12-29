@@ -4,10 +4,10 @@ namespace inventory\controllers;
 
 use inventory\lib\alertHandler;
 use inventory\lib\inputFilter;
-use inventory\models\UsersModel;
+use inventory\models\usersModel;
 use Exception;
 
-class IndexController extends AbstractController
+class indexController extends abstractController
 {
     use inputFilter;
 
@@ -47,7 +47,7 @@ class IndexController extends AbstractController
                 'confirm_password' => fn($value) => $value,
                 'date_of_birth' => fn($value) => $this->filterDate($value),
                 'gender' => fn($value) => $this->validateGender($value),
-                'role' => fn($value) => $this->validateRole($value),
+                'role' => fn($value) => $this->validateRole($value)
             ]);
 
             $this->validatePassword($filteredInputs['password'], $filteredInputs['confirm_password']);
@@ -55,6 +55,7 @@ class IndexController extends AbstractController
 
             $user = $this->createUserFromInputs($filteredInputs);
             $user->setStatus('active');
+            $user->setCreatedAt(date('Y-m-d H:i:s'));
 
             if ($user->save()) {
                 $this->redirectWithAlert('success', '/index', 'Account created successfully! Log in to get started.');
@@ -115,9 +116,9 @@ class IndexController extends AbstractController
         return $role;
     }
 
-    private function createUserFromInputs(array $inputs): UsersModel
+    private function createUserFromInputs(array $inputs): usersModel
     {
-        $user = new UsersModel();
+        $user = new usersModel();
         $user->setFirstName($inputs['first_name']);
         $user->setLastName($inputs['last_name']);
         $user->setEmail($inputs['email']);
@@ -166,7 +167,7 @@ class IndexController extends AbstractController
                 throw new Exception('Email and password are required.');
             }
 
-            $user = UsersModel::findByEmail($email);
+            $user = usersModel::findByEmail($email);
 
             if (!$user || !password_verify($password, $user->getPassword())) {
                 throw new Exception('Invalid email or password.');
@@ -184,7 +185,7 @@ class IndexController extends AbstractController
         }
     }
 
-    private function initializeUserSession(UsersModel $user): void
+    private function initializeUserSession(usersModel $user): void
     {
         $this->initializeSession();
         $_SESSION['user'] = [

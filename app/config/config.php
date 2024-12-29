@@ -5,15 +5,15 @@ if (!defined('DS')) {
 }
 
 
-define('APP_PATH', realpath(dirname(__FILE__)) . DS . '..'  . DS);
+define('APP_PATH', realpath(dirname(dirname(__FILE__))) . DS);
 define('VIEWS_PATH', APP_PATH  . 'views' . DS);
 define('TEMPLATE_PATH', APP_PATH  . 'template' . DS);
 define('CSS', '/css/');
 define('JS', '/js/');
 
 defined('DATABASE_HOST_NAME')   ? null : define('DATABASE_HOST_NAME', 'localhost');
-// defined('DATABASE_USER_NAME')   ? null : define('DATABASE_USER_NAME', 'hammad');
-defined('DATABASE_USER_NAME')   ? null : define('DATABASE_USER_NAME', 'Mohamed');
+defined('DATABASE_USER_NAME')   ? null : define('DATABASE_USER_NAME', 'hammad');
+// defined('DATABASE_USER_NAME')   ? null : define('DATABASE_USER_NAME', 'Mohamed');
 defined('DATABASE_PASSWORD')   ? null : define('DATABASE_PASSWORD', 'My@2530');
 // defined('DATABASE_PASSWORD')   ? null : define('DATABASE_PASSWORD', 'My@2530');
 defined('DATABASE_DB_NAME')   ? null : define('DATABASE_DB_NAME', 'inventory');

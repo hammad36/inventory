@@ -2,9 +2,7 @@
 
 namespace inventory\controllers;
 
-use inventory\controllers\AbstractController;
-
-class LogoutController extends AbstractController
+class logoutController extends abstractController
 {
     public function defaultAction(): void
     {

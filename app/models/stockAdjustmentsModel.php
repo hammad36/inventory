@@ -41,7 +41,7 @@ class stockAdjustmentsModel extends abstractModel
 
     private function setUserNameFromId(): void
     {
-        $user = UsersModel::getByPK($this->user_id);
+        $user = usersModel::getByPK($this->user_id);
         $this->user_name = $user ? $user->getFullName() : 'Unknown User';
     }
 

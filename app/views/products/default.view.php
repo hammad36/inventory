@@ -74,7 +74,7 @@ endif
                                 <td class="px-6 py-4 text-gray-700"><?= htmlspecialchars($product['sku'] ?? 'N/A') ?></td>
                                 <td class="px-6 py-4 text-gray-600"><?= htmlspecialchars($product['description'] ?? 'N/A') ?></td>
                                 <td class="px-6 py-4 text-gray-800"><?= htmlspecialchars($product['quantity'] ?? '0') ?></td>
-                                <td class="px-6 py-4 text-gray-800">$<?= number_format($product['unit_price'] ?? 0, 2) ?></td>
+                                <td class="px-6 py-4 text-gray-800"><?= number_format($product['unit_price'] ?? 0, 2) ?> EGP</td>
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-2">
                                         <img src="<?= htmlspecialchars($product['photo_urls'][0] ?? 'default.jpg') ?>" alt="Image 1" class="w-16 h-16 object-cover rounded-lg">
