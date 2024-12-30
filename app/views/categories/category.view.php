@@ -3,15 +3,21 @@ if (!isset($_SESSION['user'])): ?>
     <div class="relative z-20 mx-auto max-w-7xl py-40 px-6 lg:px-8">
         <div class="text-center my-10">
             <p class="mt-4 text-xl text-gray-600">
-                Please <a href="/index" class="text-blue-600 hover:text-blue-800">sign in</a> to access this page
+                Please <a href="/index" class="text-blue-600 hover:text-blue-800">log in</a> to access this page.
             </p>
         </div>
     </div>
 <?php
     exit;
-endif
+endif;
+
+// Check if the category is set and valid.
+if (!isset($category) || !$category->getName()) {
+    echo '<p class="text-center text-red-500">Category not found.</p>';
+    exit;
+}
 ?>
-<section class="relative overflow-hidden min-h-[calc(101.1vh-8rem)] bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 sm:pb-16 lg:pb-24 xl:pb-28">
+<section class="min-h-[calc(101.1vh-8rem)]   relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent pb-12 sm:pb-16 lg:pb-24 xl:pb-28">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
 
     <!-- Back Button -->
@@ -43,7 +49,6 @@ endif
                 Explore products under the "<?php echo htmlspecialchars($category->getName()); ?>" category.
             </p>
         </div>
-
         <?php
 
         use inventory\lib\alertHandler;
@@ -78,7 +83,11 @@ endif
                             <?php if (count($photoUrls) > 1): ?>
                                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
                                     <?php foreach ($photoUrls as $index => $url): ?>
-                                        <button class="w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-colors duration-200"></button>
+                                        <button
+                                            class="w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-colors duration-200"
+                                            data-index="<?php echo $index; ?>"
+                                            data-url="<?php echo htmlspecialchars($url); ?>">
+                                        </button>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
@@ -136,7 +145,7 @@ endif
 
                                 <!-- Client Controls -->
                             <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
-                                <form action="/basket/add" method="POST" class="space-y-4">
+                                <form action="/categories/category/<?php echo htmlspecialchars($category->getCategoryId()); ?>" method="POST" class="space-y-4">
                                     <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
                                     <div class="relative">
                                         <input type="number"
@@ -154,7 +163,7 @@ endif
                                     </div>
                                     <button type="submit"
                                         class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 group">
-                                        <span>Add to Basket</span>
+                                        <span>Add to Cart</span>
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-200"
                                             fill="none"
@@ -174,3 +183,24 @@ endif
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const productContainers = document.querySelectorAll(".relative.block");
+
+        productContainers.forEach((container) => {
+            const dots = container.querySelectorAll("button[data-index]");
+            const image = container.querySelector("img");
+
+            dots.forEach((dot) => {
+                dot.addEventListener("click", () => {
+                    const url = dot.dataset.url;
+                    image.src = url;
+
+                    dots.forEach((d) => d.classList.remove("bg-white"));
+                    dot.classList.add("bg-white");
+                });
+            });
+        });
+    });
+</script>

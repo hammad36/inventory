@@ -26,6 +26,14 @@ class cartController extends abstractController
 
         $this->_view();
     }
+    public function checkoutAction()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $this->_view();
+    }
 
     private function redirectWithAlert(string $type, string $url, string $message): void
     {

@@ -48,26 +48,24 @@
             <!-- Right Section -->
             <div class="flex items-center space-x-2 sm:space-x-4">
                 <!-- Shopping Basket - Only show for clients -->
-                <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'user'): ?>
-                    <a href="/cart" class="relative p-2 bg-transparent rounded-full text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110 group">
-                        <span class="sr-only">Shopping basket</span>
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                        </svg>
-                        <?php if (isset($_SESSION['basket_count']) && $_SESSION['basket_count'] > 0): ?>
-                            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                                <?php echo $_SESSION['basket_count']; ?>
-                            </span>
-                        <?php endif; ?>
-                        <!-- Tooltip - Only show on desktop -->
-                        <span class="absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full -left-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg whitespace-nowrap hidden sm:block">
-                            View Basket
-                            <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255">
-                                <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
-                            </svg>
+                <a href="/cart" class="relative p-2 bg-transparent rounded-full text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110 group">
+                    <span class="sr-only">Shopping basket</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                    </svg>
+                    <?php if (isset($_SESSION['basket_count']) && $_SESSION['basket_count'] > 0): ?>
+                        <span class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                            <?php echo $_SESSION['basket_count']; ?>
                         </span>
-                    </a>
-                <?php endif; ?>
+                    <?php endif; ?>
+                    <!-- Tooltip - Only show on desktop -->
+                    <span class="absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full -left-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg whitespace-nowrap hidden sm:block">
+                        View Basket
+                        <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255">
+                            <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
+                        </svg>
+                    </span>
+                </a>
 
                 <!-- User Menu -->
                 <?php if (isset($_SESSION['user'])): ?>

@@ -6,6 +6,7 @@ use DateTime;
 use inventory\controllers\abstractController;
 use inventory\lib\inputFilter;
 use inventory\lib\alertHandler;
+use inventory\models\cartItemsModel;
 use inventory\models\categoriesModel;
 use inventory\models\productPhotosModel;
 use inventory\models\productsModel;
@@ -106,6 +107,68 @@ class categoriesController extends abstractController
     public function addNewCategoryAction()
     {
         $this->processCategoryForm(new categoriesModel(), '/categories/manageCategories/AddNewCategory', 'add', 'Category added successfully.');
+    }
+
+    public function addToCartAction()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                // Get and validate user
+                $userId = $_SESSION['user']['id'] ?? null;
+                if (!$userId) {
+                    $this->redirectWithAlert('error', '/categories', 'Please log in to add items to cart.');
+                    return;
+                }
+
+                // Get and validate product data
+                $productId = $this->filterInt($_POST['product_id'] ?? null);
+                $quantity = $this->filterInt($_POST['quantity'] ?? 1);
+
+                if (!$productId || $quantity <= 0) {
+                    $this->redirectWithAlert('error', '/categories', 'Invalid input for adding to cart.');
+                    return;
+                }
+
+                // Validate product exists
+                $product = productsModel::getByPK($productId);
+                if (!$product) {
+                    $this->redirectWithAlert('error', '/categories', 'Product not found.');
+                    return;
+                }
+
+                // Check for existing cart item
+                $existingItems = cartItemsModel::getBy([
+                    'user_id' => $userId,
+                    'product_id' => $productId
+                ]);
+
+                if (!empty($existingItems)) {
+                    // Update existing cart item
+                    $cartItem = $existingItems[0];
+                    $newQuantity = $cartItem->getQuantity() + $quantity;
+                    $cartItem->setQuantity((string)$newQuantity); // Cast to string as required by model
+                    $success = $cartItem->save();
+                } else {
+                    // Create new cart item
+                    $cartItem = new cartItemsModel();
+                    $cartItem->setUserID((string)$userId); // Cast to string as required by model
+                    $cartItem->setProductID((string)$productId); // Cast to string as required by model
+                    $cartItem->setQuantity((string)$quantity); // Cast to string as required by model
+                    // added_at will be set automatically by model default
+                    $success = $cartItem->save();
+                }
+
+                if ($success) {
+                    $this->redirectWithAlert('success', '/categories', "Product added to cart successfully.");
+                } else {
+                    $this->redirectWithAlert('error', '/categories', "Failed to add product to cart.");
+                }
+            } catch (\InvalidArgumentException $e) {
+                $this->redirectWithAlert('error', '/categories', $e->getMessage());
+            } catch (\Exception $e) {
+                $this->redirectWithAlert('error', '/categories', "An error occurred while adding to cart.");
+            }
+        }
     }
 
     public function editCategoryAction($categoryId)
