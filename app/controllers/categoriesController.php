@@ -37,7 +37,12 @@ class categoriesController extends abstractController
         if (!$this->validateCategoryExists($category, '/categories')) return;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->handleStockAdjustment($categoryId);
+            // Check if this is a cart action or stock adjustment
+            if (isset($_POST['cart_action'])) {
+                $this->handleAddToCart($categoryId);
+            } else {
+                $this->handleStockAdjustment($categoryId);
+            }
         }
 
         $this->_data = [
@@ -48,6 +53,47 @@ class categoriesController extends abstractController
 
         $this->ensureSessionStarted();
         $this->_view();
+    }
+
+    private function handleAddToCart($categoryId)
+    {
+        $userId = $_SESSION['user']['id'] ?? null;
+        $redirectUrl = "/categories/category/" . htmlspecialchars($categoryId);
+        if (!$userId) {
+            $this->redirectWithAlert('error', $redirectUrl, 'Please log in to add items to cart.');
+            return;
+        }
+
+        $productId = $this->filterInt($_POST['product_id'] ?? null);
+        $quantity = $this->filterInt($_POST['quantity'] ?? null);
+        if (!$productId || !$quantity || $quantity <= 0) {
+            $this->redirectWithAlert('error', $redirectUrl, 'Invalid input for cart.');
+            return;
+        }
+
+        // Check product exists and has enough stock
+        $product = productsModel::getByPK($productId);
+        if (!$product) {
+            $this->redirectWithAlert('error', $redirectUrl, 'Product not found.');
+            return;
+        }
+
+        if ($product->getQuantity() < $quantity) {
+            $this->redirectWithAlert('error', $redirectUrl, 'Not enough stock available.');
+            return;
+        }
+
+        // Add to cart
+        $cartItem = new cartItemsModel();
+        $cartItem->setUserId($userId);
+        $cartItem->setProductId($productId);
+        $cartItem->setQuantity($quantity);
+
+        if ($cartItem->save()) {
+            $this->redirectWithAlert('success', $redirectUrl, "$quantity product(s) added to cart successfully!");
+        } else {
+            $this->redirectWithAlert('error', $redirectUrl, 'Failed to add product to cart.');
+        }
     }
 
     private function handleStockAdjustment($categoryId)

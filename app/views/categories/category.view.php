@@ -146,6 +146,7 @@ if (!isset($category) || !$category->getName()) {
                                 <!-- Client Controls -->
                             <?php elseif ($_SESSION['user']['role'] === 'user'): ?>
                                 <form action="/categories/category/<?php echo htmlspecialchars($category->getCategoryId()); ?>" method="POST" class="space-y-4">
+                                    <input type="hidden" name="cart_action" value="1">
                                     <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
                                     <div class="relative">
                                         <input type="number"
