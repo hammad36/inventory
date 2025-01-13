@@ -30,43 +30,33 @@
                                     <h3 class="text-xl font-semibold text-gray-800"><?= htmlspecialchars($item['name']) ?></h3>
 
                                     <!-- Quantity Controls -->
-                                    <form action="/cart/updateQuantity"
-                                        method="POST"
-                                        class="flex items-center gap-3"
-                                        x-data="{ 
-                                                  quantity: <?= $item['quantity'] ?>,
-                                                  updateQuantity(action) {
-                                                      if (action === 'increase') {
-                                                          this.quantity++;
-                                                      } else if (action === 'decrease' && this.quantity > 1) {
-                                                          this.quantity--;
-                                                      }
-                                                      this.$refs.form.submit();
-                                                  }
-                                              }"
-                                        x-ref="form">
-                                        <input type="hidden" name="cart_item_id" value="<?= $item['cart_item_id'] ?>">
+                                    <!-- Quantity Controls -->
+                                    <form action="/cart/updateQuantity" method="POST" class="flex items-center gap-3">
+                                        <input type="hidden" name="cart_item_id" value="<?= htmlspecialchars($item['cart_item_id']) ?>">
+                                        <input type="hidden" id="quantity-<?= htmlspecialchars($item['cart_item_id']) ?>" name="quantity" value="<?= htmlspecialchars($item['quantity']) ?>" onchange="this.form.submit()">
 
+                                        <!-- Decrease Button -->
                                         <button type="button"
-                                            @click="updateQuantity('decrease')"
                                             class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
-                                            :disabled="quantity <= 1">
-                                            <span class="text-xl">−</span>
+                                            onclick="updateQuantity(<?= htmlspecialchars($item['cart_item_id']) ?>, -1)">
+                                            −
                                         </button>
 
-                                        <input type="number"
-                                            name="quantity"
-                                            x-model="quantity"
-                                            min="1"
-                                            @change="$refs.form.submit()"
-                                            class="w-16 text-center border rounded-lg py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <!-- Display Quantity -->
+                                        <span id="quantity-display-<?= htmlspecialchars($item['cart_item_id']) ?>" class="text-lg font-semibold">
+                                            <?= htmlspecialchars($item['quantity']) ?>
+                                        </span>
 
+                                        <!-- Increase Button -->
                                         <button type="button"
-                                            @click="updateQuantity('increase')"
-                                            class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors">
-                                            <span class="text-xl">+</span>
+                                            class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+                                            onclick="updateQuantity(<?= htmlspecialchars($item['cart_item_id']) ?>, 1)">
+                                            +
                                         </button>
                                     </form>
+
+
+
                                 </div>
 
                                 <!-- Price -->
@@ -132,9 +122,6 @@
                                     <p class="text-blue-600">$<?= number_format($total, 2) ?></p>
                                 </div>
                             </div>
-                            <a href="/cart/checkout" class="block w-full bg-blue-600 text-white py-4 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold text-center mt-6 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                Proceed to Checkout
-                            </a>
                             <a href="/categories" class="block text-center text-blue-600 hover:text-blue-700 hover:underline mt-4">
                                 Continue Shopping
                             </a>
@@ -145,3 +132,20 @@
         </div>
     </div>
 </section>
+<script>
+    function updateQuantity(cartItemId, change) {
+        const quantityInput = document.getElementById(`quantity-${cartItemId}`);
+        const quantityDisplay = document.getElementById(`quantity-display-${cartItemId}`);
+        let currentQuantity = parseInt(quantityInput.value, 10);
+
+        // Ensure the quantity does not go below 1
+        currentQuantity = Math.max(1, currentQuantity + change);
+
+        // Update the hidden input and display
+        quantityInput.value = currentQuantity;
+        quantityDisplay.textContent = currentQuantity;
+
+        // Trigger the form submission
+        quantityInput.dispatchEvent(new Event('change'));
+    }
+</script>
