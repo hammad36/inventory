@@ -1,16 +1,12 @@
 <!-- About Us Section -->
 <section class="relative overflow-hidden bg-gradient-to-br from-blue-200 via-white to-blue-100 to-transparent pb-16 pt-20 sm:pb-20 sm:pt-32 lg:pb-24 xl:pb-32 xl:pt-40">
-
     <!-- Background Animation -->
     <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50 animate-pulse"></div>
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto">
-            <h2 class="text-5xl font-extrabold text-blue-600 ">Who We Are</h2>
+            <h2 class="text-5xl font-extrabold text-blue-600">Who We Are</h2>
             <p class="mt-6 text-lg leading-7 text-gray-900 dark:text-gray-900">
-                InvenHammad System is your trusted partner in optimizing inventory management for organizations worldwide.
-                Our cutting-edge platform is designed to empower businesses with precise insights, seamless processes,
-                and unparalleled operational efficiency. With a focus on innovation and reliability, we help you achieve
-                your business goals effortlessly.
+                Welcome to your ultimate shopping destination, where we bring together a curated collection of premium products across fashion, electronics, home living, and more. Our marketplace is designed to provide you with an exceptional shopping experience, offering carefully selected items from trusted brands and sellers worldwide. We're committed to making your shopping journey seamless, enjoyable, and rewarding.
             </p>
         </div>
     </div>
@@ -20,28 +16,28 @@
 <section class="bg-white dark:bg-gray-800">
     <div class="py-16 px-6 mx-auto max-w-screen-xl lg:py-24 lg:px-8">
         <div class="text-center">
-            <h2 class="text-4xl font-extrabold text-gray-100">Our Expertise</h2>
-            <p class="mt-4 mb-12 text-lg text-gray-200 ">
-                We deliver a range of innovative services tailored to meet your unique inventory and operational needs.
+            <h2 class="text-4xl font-extrabold text-gray-100">Our Services</h2>
+            <p class="mt-4 mb-12 text-lg text-gray-200">
+                Experience shopping excellence with our comprehensive range of services designed to enhance your buying journey.
             </p>
         </div>
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105">
-                <h3 class="text-xl font-bold text-gray-100">Real-Time Monitoring</h3>
-                <p class="mt-2 text-gray-200 ">
-                    Gain immediate insights into inventory levels, movements, and trends for data-driven decisions.
+                <h3 class="text-xl font-bold text-gray-100">Premium Selection</h3>
+                <p class="mt-2 text-gray-200">
+                    Access a vast collection of high-quality products across multiple categories, carefully curated for our discerning customers.
                 </p>
             </div>
             <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105">
-                <h3 class="text-xl font-bold text-gray-100">Advanced Analytics</h3>
-                <p class="mt-2 text-gray-200 ">
-                    Leverage detailed reports and predictive analytics to stay ahead of the curve.
+                <h3 class="text-xl font-bold text-gray-100">Smart Shopping</h3>
+                <p class="mt-2 text-gray-200">
+                    Enjoy personalized recommendations and detailed product insights to make informed purchasing decisions.
                 </p>
             </div>
             <div class="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md transition-transform transform hover:scale-105">
-                <h3 class="text-xl font-bold text-gray-100">Seamless Integration</h3>
-                <p class="mt-2 text-gray-200 ">
-                    Easily integrate with existing tools and systems for a unified and streamlined workflow.
+                <h3 class="text-xl font-bold text-gray-100">Seamless Experience</h3>
+                <p class="mt-2 text-gray-200">
+                    Shop with confidence using our secure payment systems and enjoy reliable delivery services.
                 </p>
             </div>
         </div>
@@ -52,28 +48,28 @@
 <section class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white py-16 px-6">
     <div class="mx-auto max-w-screen-xl lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-extrabold">Why Partner with Us?</h2>
+            <h2 class="text-4xl font-extrabold">Why Shop With Us?</h2>
             <p class="mt-4 text-lg">
-                We are committed to excellence, innovation, and delivering measurable results that drive success.
+                Discover the advantages of shopping at your favorite marketplace, where quality meets convenience.
             </p>
         </div>
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div class="p-6 bg-white rounded-lg text-gray-800 shadow-md hover:shadow-lg transform hover:scale-105">
-                <h3 class="text-xl font-bold">Unmatched Support</h3>
+                <h3 class="text-xl font-bold">24/7 Customer Support</h3>
                 <p class="mt-2 text-gray-600">
-                    Our expert team is available 24/7 to assist with any challenges or questions you may have.
+                    Our dedicated support team is always ready to assist you with any shopping-related queries or concerns.
                 </p>
             </div>
             <div class="p-6 bg-white rounded-lg text-gray-800 shadow-md hover:shadow-lg transform hover:scale-105">
-                <h3 class="text-xl font-bold">Scalable Solutions</h3>
+                <h3 class="text-xl font-bold">Secure Shopping</h3>
                 <p class="mt-2 text-gray-600">
-                    From small businesses to large enterprises, our platform scales effortlessly to meet your needs.
+                    Shop with peace of mind knowing your transactions and personal information are protected.
                 </p>
             </div>
             <div class="p-6 bg-white rounded-lg text-gray-800 shadow-md hover:shadow-lg transform hover:scale-105">
-                <h3 class="text-xl font-bold">Proven Expertise</h3>
+                <h3 class="text-xl font-bold">Quality Guaranteed</h3>
                 <p class="mt-2 text-gray-600">
-                    Backed by years of industry experience, we provide trusted solutions that deliver tangible outcomes.
+                    Every product in our marketplace meets strict quality standards to ensure customer satisfaction.
                 </p>
             </div>
         </div>

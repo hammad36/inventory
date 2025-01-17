@@ -14,7 +14,7 @@
             </h1>
         </div>
 
-        <div class="mx-auto max-w-4xl px-4 py-10 text-center">
+        <div class="mx-auto max-w-4xl px-4  text-center">
             <h1 class="text-2xl py-5 sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-blue-600 animate-fade-up">
                 Your Ultimate Shopping Destination
                 <span class="text-gray-900 block sm:inline">— Everything You Love, All in One Place</span>

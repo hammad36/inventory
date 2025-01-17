@@ -13,9 +13,12 @@
 
             <!-- Logo -->
             <div class="flex flex-1 items-center justify-between sm:justify-start">
-                <div class="flex items-center">
-                    <img class="h-10 w-auto transition-transform hover:rotate-6" src="../../images/logo.png" alt="Company Logo">
-                    <a href="/home" class="text-white font-bold text-lg sm:text-xl ml-2 sm:ml-3 tracking-wider hover:text-blue-300 transition-colors duration-300">
+                <div class="flex items-center group">
+                    <img class="h-10 w-auto transition-all duration-300 transform group-hover:rotate-6 group-hover:scale-110"
+                        src="../../images/logo.png"
+                        alt="Company Logo">
+                    <a href="/home"
+                        class="text-white font-bold text-lg sm:text-xl ml-2 sm:ml-3 tracking-wider hover:text-blue-300 transition-all duration-300 transform group-hover:translate-x-1">
                         InvenHammad
                     </a>
                 </div>
@@ -24,23 +27,23 @@
                 <div class="hidden sm:flex sm:ml-6 space-x-4">
                     <a href="/home" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                         <span class="relative z-10">Home</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
                     <a href="/categories" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                         <span class="relative z-10">Categories</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
                     <a href="/stockAdjustments" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                         <span class="relative z-10">Stock Adjustments</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
                     <a href="/reports" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                         <span class="relative z-10">Reports</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
                     <a href="/about" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                         <span class="relative z-10">About Us</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-white origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
                 </div>
             </div>
@@ -58,13 +61,6 @@
                             <?php echo $_SESSION['basket_count']; ?>
                         </span>
                     <?php endif; ?>
-                    <!-- Tooltip - Only show on desktop -->
-                    <span class="absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full -left-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg whitespace-nowrap hidden sm:block">
-                        View Basket
-                        <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255">
-                            <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
-                        </svg>
-                    </span>
                 </a>
 
                 <!-- User Menu -->
