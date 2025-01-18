@@ -122,7 +122,7 @@
                                     <p class="text-blue-600">$<?= number_format($total, 2) ?></p>
                                 </div>
                             </div>
-                            <a href="/categories" class="block text-center text-blue-600 hover:text-blue-700 hover:underline mt-4">
+                            <a href="/cart/checkout" class="block text-center text-blue-600 hover:text-blue-700 hover:underline mt-4">
                                 Continue Shopping
                             </a>
                         </div>
@@ -132,6 +132,8 @@
         </div>
     </div>
 </section>
+
+
 <script>
     function updateQuantity(cartItemId, change) {
         const quantityInput = document.getElementById(`quantity-${cartItemId}`);
