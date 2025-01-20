@@ -127,8 +127,19 @@
                                 <p class="text-blue-600">$<?= number_format($total, 2) ?></p>
                             </div>
                         </div>
-                        <!-- Pay Now Button -->
                         <form action="/cart/processPayment" method="POST">
+                            <!-- Payment Method Selection -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700">Payment Method</label>
+                                <select name="payment_method" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <option value="4924047">Online Card</option>
+                                    <option value="4929903">Mobile Wallet</option>
+                                    <option value="4929849">Cash Collection</option>
+                                </select>
+                            </div>
+
+                            <!-- Pay Now Button -->
                             <button type="submit"
                                 class="w-full bg-blue-600 text-white py-4 px-8 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold mt-6 flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

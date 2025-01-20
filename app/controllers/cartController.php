@@ -243,4 +243,126 @@ class cartController extends abstractController
         // Redirect to a thank you page or display the invoice
         $this->redirectWithAlert('success', '/thankYou', 'Your order has been confirmed. Thank you for your purchase!');
     }
+
+    public function processPaymentAction()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['user'])) {
+            $this->redirectWithAlert('warning', '/index', 'Please sign in to proceed to payment.');
+            return;
+        }
+
+        // Fetch selected payment method
+        $paymentMethod = $_POST['payment_method'] ?? '4924047'; // Default to Online Card
+
+        // Fetch cart items for the logged-in user
+        $userId = $_SESSION['user']['id'];
+        $cartItems = cartItemsModel::getBy(['user_id' => $userId]);
+
+        // Calculate subtotal, tax, and total
+        $subtotal = 0;
+        foreach ($cartItems as $item) {
+            $product = productsModel::getByPK($item->getProductID());
+            if ($product) {
+                $subtotal += $item->getQuantity() * $product->getUnitPrice();
+            }
+        }
+        $tax = $subtotal * 0.1; // 10% tax
+        $total = $subtotal + $tax;
+
+        // Paymob API credentials
+        $apiKey = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBeE56TXhOeXdpYm1GdFpTSTZJbWx1YVhScFlXd2lmUS5xeWdvNzNzSHFPaFhQcFdKaW9LQzhEWHhvaE1NRDhiM0pBZ2lLQmoxNUdGNVlXR2hua0hZUTRvTDJxb3NqNnNVN0MwTWlkbTJfSzQ3ekxUU0NJZ29nQQ==";
+
+        // Step 1: Get authentication token
+        $authResponse = $this->callPaymobAPI('https://accept.paymobsolutions.com/api/auth/tokens', [
+            'api_key' => $apiKey,
+        ]);
+        $authToken = $authResponse['token'];
+
+        // Step 2: Create an order
+        $orderResponse = $this->callPaymobAPI('https://accept.paymobsolutions.com/api/ecommerce/orders', [
+            'auth_token' => $authToken,
+            'delivery_needed' => 'false',
+            'amount_cents' => $total * 100, // Amount in cents
+            'currency' => 'EGP',
+            'items' => [],
+        ]);
+        $orderId = $orderResponse['id'];
+
+        // Step 3: Generate payment key
+        $paymentKeyResponse = $this->callPaymobAPI('https://accept.paymobsolutions.com/api/acceptance/payment_keys', [
+            'auth_token' => $authToken,
+            'amount_cents' => $total * 100,
+            'expiration' => 3600, // 1 hour
+            'order_id' => $orderId,
+            'billing_data' => [
+                'apartment' => '803',
+                'email' => $_SESSION['user']['email'],
+                'floor' => '42',
+                'first_name' => $_SESSION['user']['name'],
+                'street' => $_SESSION['shipping_address']['street'] ?? 'N/A',
+                'building' => '8028',
+                'phone_number' => '+201234567890', // Replace with user's phone number
+                'shipping_method' => 'PKG',
+                'postal_code' => '12345',
+                'city' => $_SESSION['shipping_address']['city'] ?? 'N/A',
+                'country' => 'EG',
+                'last_name' => $_SESSION['user']['name'],
+                'state' => $_SESSION['shipping_address']['state'] ?? 'N/A',
+            ],
+            'currency' => 'EGP',
+            'integration_id' => $paymentMethod, // Use selected payment method
+        ]);
+        $paymentKey = $paymentKeyResponse['token'];
+
+        // Redirect to Paymob payment page
+        $paymentUrl = "https://accept.paymobsolutions.com/api/acceptance/iframes/$paymentMethod?payment_token=$paymentKey";
+        header("Location: $paymentUrl");
+        exit;
+    }
+
+    // Handle Paymob webhook for payment success/failure
+    public function paymentCallbackAction()
+    {
+        $payload = file_get_contents('php://input');
+        $data = json_decode($payload, true);
+
+        // Verify the HMAC signature
+        $hmac = hash_hmac('sha512', $payload, 'C212647EBFBC03CC896EECBCCDD00CDA');
+        if ($hmac !== $_SERVER['HTTP_X_HMAC_SIGNATURE']) {
+            http_response_code(401);
+            exit;
+        }
+
+        // Process the payment status
+        if ($data['success'] === true) {
+            // Payment succeeded
+            $orderId = $data['order']['id'];
+            $this->redirectWithAlert('success', '/cart/success', 'Payment successful!');
+        } else {
+            // Payment failed
+            $this->redirectWithAlert('error', '/cart/failed', 'Payment failed. Please try again.');
+        }
+    }
+
+    private function callPaymobAPI($url, $data)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+        ]);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        // Log the response for debugging
+        error_log("Paymob API Response: " . print_r($response, true));
+
+        return json_decode($response, true);
+    }
 }
