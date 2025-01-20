@@ -1,23 +1,42 @@
-<?php
-if (!isset($_SESSION['user'])): ?>
-    <div class="relative z-20 mx-auto max-w-7xl py-40 px-6 lg:px-8">
+<section class="min-h-[calc(101.1vh-8rem)] relative overflow-hidden bg-gradient-to-b from-blue-50 via-transparent to-transparent ">
+    <?php
+    // Check if the user is logged in and is an admin
+    if (!isset($_SESSION['user'])) {
+        // Redirect or show a message for non-logged-in users
+        echo '
+        <div class="relative z-20 mx-auto max-w-7xl py-40 px-6 lg:px-8">
+            <div class="text-center my-10">
+                <p class="mt-4 text-xl text-gray-600">
+                    Please <a href="/index" class="text-blue-600 hover:text-blue-800">sign in</a> to access this page.
+                </p>
+            </div>
+        </div>';
+        return; // Stop further execution
+    }
+
+    if ($_SESSION['user']['role'] !== 'admin') {
+        // Show a message for non-admin users
+        echo '
+        <div class="relative z-20 mx-auto max-w-7xl py-40 px-6 lg:px-8">
+            <div class="text-center my-10">
+                <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">Restricted to Administrators</h1>
+            </div>
+        </div>';
+        return; // Stop further execution
+    }
+    ?>
+
+    <!-- Background Gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-100 via-white to-blue-50"></div>
+
+    <!-- Main Content -->
+    <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
+        <!-- Page Heading -->
         <div class="text-center my-10">
-            <p class="mt-4 text-xl text-gray-600">
-                Please <a href="/index" class="text-blue-600 hover:text-blue-800">sign in</a> to access this page
-            </p>
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-800 sm:text-6xl">
+                <span class="text-blue-600">Inventory</span> Reports
+            </h1>
         </div>
-    </div>
-<?php
-    exit;
-endif
-?>
-
-<section
-    class="relative overflow-hidden min-h-[calc(101.1vh-8rem)] bg-gradient-to-b from-blue-100 via-blue-50 to-transparent pb-12  sm:pb-16  lg:pb-24 xl:pb-32 xl:">
-
-    <div class="container mx-auto p-6 mt-20 sm:mt-28">
-        <h1 class="text-5xl font-extrabold text-gray-800 mb-8 text-center">Inventory Reports</h1>
-
         <!-- Filters Section -->
         <div class="flex flex-wrap justify-center gap-4 mb-8">
             <button
