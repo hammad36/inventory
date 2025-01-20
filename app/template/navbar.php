@@ -33,7 +33,7 @@
                         <span class="relative z-10">Categories</span>
                         <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
-                    <?php if ($_SESSION['user']['role'] === 'admin'): ?>
+                    <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
                         <a href="/stockAdjustments" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                             <span class="relative z-10">Stock Adjustments</span>
                             <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
@@ -52,7 +52,7 @@
 
             <!-- Right Section -->
             <div class="flex items-center space-x-2 sm:space-x-4">
-                <!-- Shopping Basket - Only show for clients -->
+                <!-- Shopping Basket -->
                 <a href="/cart" class="relative p-2 bg-transparent rounded-full text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110 group">
                     <span class="sr-only">Shopping basket</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -94,8 +94,10 @@
         <div class="space-y-1 px-2 pt-2 pb-3">
             <a href="/home" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Home</a>
             <a href="/categories" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Categories</a>
-            <a href="/stockAdjustments" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Stock Adjustments</a>
-            <a href="/reports" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Reports</a>
+            <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
+                <a href="/stockAdjustments" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Stock Adjustments</a>
+                <a href="/reports" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Reports</a>
+            <?php endif; ?>
             <a href="/about" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">About Us</a>
         </div>
     </div>
