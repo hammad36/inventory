@@ -33,14 +33,16 @@
                         <span class="relative z-10">Categories</span>
                         <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
                     </a>
-                    <a href="/stockAdjustments" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
-                        <span class="relative z-10">Stock Adjustments</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
-                    </a>
-                    <a href="/reports" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
-                        <span class="relative z-10">Reports</span>
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
-                    </a>
+                    <?php if ($_SESSION['user']['role'] === 'admin'): ?>
+                        <a href="/stockAdjustments" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                            <span class="relative z-10">Stock Adjustments</span>
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
+                        </a>
+                        <a href="/reports" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
+                            <span class="relative z-10">Reports</span>
+                            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
+                        </a>
+                    <?php endif; ?>
                     <a href="/about" class="relative text-gray-300 hover:text-white px-3 py-2 text-sm font-medium group">
                         <span class="relative z-10">About Us</span>
                         <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></span>
