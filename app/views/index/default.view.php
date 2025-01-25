@@ -30,30 +30,20 @@
             <!-- Social Media Login -->
             <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
                 <!-- Google Login -->
-                <div id="g_id_onload"
-                    data-client_id="<?php echo getenv('GOOGLE_CLIENT_ID'); ?>"
-                    data-context="signin"
-                    data-ux_mode="popup"
-                    data-login_uri="/auth/google"
-                    data-auto_prompt="false">
-                </div>
-
-                <div class="g_id_signin"
-                    data-type="standard"
-                    data-shape="pill"
-                    data-theme="outline"
-                    data-text="continue_with"
-                    data-size="large"
-                    data-locale="en-US"
-                    data-logo_alignment="left">
-                </div>
+                <button
+                    id="googleSignIn"
+                    class="w-full sm:w-auto flex items-center justify-center px-6 py-3 rounded-full text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 border border-gray-300 shadow-sm"
+                    aria-label="Continue with Google">
+                    <img
+                        src="https://img.icons8.com/color/24/000000/google-logo.png"
+                        alt="Google logo"
+                        class="w-7 h-7 mr-2" />
+                    Continue with Google
+                </button>
 
                 <!-- Facebook Login -->
-                <a href="/auth/facebook"
-                    class="w-full sm:w-auto flex items-center justify-center px-4 py-2.5 rounded-full text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                    <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M22.676 0H1.324C.594 0 0 .594 0 1.324v21.352C0 23.406.594 24 1.324 24H12v-9.293H9.293V11.5H12V8.793c0-2.689 1.548-4.207 3.915-4.207 1.136 0 2.332.205 2.332.205v2.573h-1.311c-1.294 0-1.693.804-1.693 1.627V11.5h3.012l-.481 3.207h-2.531V24h4.953c.73 0 1.324-.594 1.324-1.324V1.324C24 .594 23.406 0 22.676 0z" />
-                    </svg>
+                <a href="/facebook-auth/auth" class="w-full sm:w-auto flex items-center justify-center px-6 py-3 rounded-full text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all duration-200 shadow-sm">
+                    <img src="https://img.icons8.com/color/24/000000/facebook-new.png" alt="Facebook logo" class="w-7 h-7 mr-2" />
                     Continue with Facebook
                 </a>
             </div>
@@ -198,5 +188,58 @@
                 }
             });
         });
+
+
+        // Google Sign-In Initialization
+        window.onload = function() {
+            google.accounts.id.initialize({
+                client_id: '209547913831-sn0f0i11cvr6bk68vqmb9glhslgfs7kq.apps.googleusercontent.com',
+                callback: handleGoogleAuth
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignIn'), {
+                    theme: 'outline',
+                    size: 'large',
+                    width: '100%',
+                    text: 'continue_with',
+                    shape: 'pill'
+                }
+            );
+        };
+
+        async function handleGoogleAuth(response) {
+            try {
+                const res = await fetch('/google-auth/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        credential: response.credential,
+                        csrf_token: document.querySelector('meta[name="csrf-token"]')?.content
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    // Show error using your alert system
+                    if (typeof showAlert === 'function') {
+                        showAlert(data.message || 'Authentication failed', 'error');
+                    } else {
+                        alert(data.message || 'Authentication failed');
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                if (typeof showAlert === 'function') {
+                    showAlert('An error occurred during authentication', 'error');
+                } else {
+                    alert('An error occurred during authentication');
+                }
+            }
+        }
     </script>
 </section>

@@ -21,6 +21,9 @@ class usersModel extends abstractModel
     protected $created_at;
     protected $updated_at;
     protected $last_login;
+    protected $google_id;
+    private $facebookId;
+    protected $auth_provider = 'local'; // Default to 'local'
 
     // Table Metadata
     protected static $tableName = 'users';
@@ -36,6 +39,8 @@ class usersModel extends abstractModel
         'created_at'      => self::DATA_TYPE_DATE,
         'updated_at'      => self::DATA_TYPE_DATE,
         'last_login'      => self::DATA_TYPE_DATE,
+        'google_id'      => self::DATA_TYPE_STR,
+        'auth_provider'  => self::DATA_TYPE_STR
     ];
 
     protected static $primaryKey = 'user_id';
@@ -115,6 +120,29 @@ class usersModel extends abstractModel
         $this->updated_at = $this->filterDate($updatedAt);
     }
 
+
+    public function setGoogleId($googleId)
+    {
+        $this->google_id = $googleId;
+    }
+
+    public function setAuthProvider($provider)
+    {
+        $validProviders = ['local', 'google', 'facebook'];
+        if (!in_array($provider, $validProviders)) {
+            throw new \Exception('Invalid authentication provider');
+        }
+        $this->auth_provider = $provider;
+    }
+    public function setFacebookId($facebookId): void
+
+    {
+
+        $this->facebookId = $facebookId;
+    }
+
+
+
     // Getters
     public function getUserID()
     {
@@ -187,4 +215,18 @@ class usersModel extends abstractModel
         $result = self::get($sql, $params);
         return !empty($result) ? $result[0] : null;
     }
+
+    public function getAuthProvider(): string
+    {
+        return $this->auth_provider;
+    }
+
+    public function getFacebookId()
+
+    {
+
+        return $this->facebookId;
+    }
+    // Optionally, add a setter method
+
 }
