@@ -29,17 +29,24 @@
 
             <!-- Social Media Login -->
             <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
-                <!-- Google Login -->
-                <button
-                    id="googleSignIn"
-                    class="w-full sm:w-auto flex items-center justify-center px-6 py-3 rounded-full text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 border border-gray-300 shadow-sm"
-                    aria-label="Continue with Google">
-                    <img
-                        src="https://img.icons8.com/color/24/000000/google-logo.png"
-                        alt="Google logo"
-                        class="w-7 h-7 mr-2" />
-                    Continue with Google
-                </button>
+                <!-- Google Login Button -->
+                <div id="g_id_onload"
+                    data-client_id='209547913831-062a4dotgc15b6ghmcu31emmrs11g64k.apps.googleusercontent.com'
+                    data-context="signin"
+                    data-ux_mode="redirect"
+                    data-login_uri="/google-auth/callback"
+                    data-auto_prompt="false">
+                </div>
+
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="filled_blue"
+                    data-text="signin_with"
+                    data-size="large"
+                    data-logo_alignment="left"
+                    data-width="300">
+                </div>
 
                 <!-- Facebook Login -->
                 <a href="/facebook-auth/auth" class="w-full sm:w-auto flex items-center justify-center px-6 py-3 rounded-full text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all duration-200 shadow-sm">
@@ -189,56 +196,29 @@
             });
         });
 
-
-        // Google Sign-In Initialization
-        window.onload = function() {
-            google.accounts.id.initialize({
-                client_id: '209547913831-sn0f0i11cvr6bk68vqmb9glhslgfs7kq.apps.googleusercontent.com',
-                callback: handleGoogleAuth
-            });
-
-            google.accounts.id.renderButton(
-                document.getElementById('googleSignIn'), {
-                    theme: 'outline',
-                    size: 'large',
-                    width: '100%',
-                    text: 'continue_with',
-                    shape: 'pill'
-                }
-            );
-        };
-
-        async function handleGoogleAuth(response) {
-            try {
-                const res = await fetch('/google-auth/auth', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        credential: response.credential,
-                        csrf_token: document.querySelector('meta[name="csrf-token"]')?.content
+        function handleGoogleSignIn(response) {
+            if (response.credential) {
+                // Send ID token to backend
+                fetch('/google-auth/callback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '<?= $csrfToken ?>'
+                        },
+                        body: JSON.stringify({
+                            credential: response.credential,
+                            g_csrf_token: document.cookie.replace(/(?:(?:^|.*;\s*)g_csrf_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+                        })
                     })
-                });
-
-                const data = await res.json();
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    // Show error using your alert system
-                    if (typeof showAlert === 'function') {
-                        showAlert(data.message || 'Authentication failed', 'error');
-                    } else {
-                        alert(data.message || 'Authentication failed');
-                    }
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                if (typeof showAlert === 'function') {
-                    showAlert('An error occurred during authentication', 'error');
-                } else {
-                    alert('An error occurred during authentication');
-                }
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Google Sign-In failed. Please try again.');
+                    });
             }
         }
     </script>

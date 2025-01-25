@@ -216,6 +216,14 @@ class usersModel extends abstractModel
         return !empty($result) ? $result[0] : null;
     }
 
+    public static function findByGoogleId($googleId)
+    {
+        $sql = 'SELECT * FROM ' . static::$tableName . ' WHERE google_id = :google_id';
+        $params = ['google_id' => [self::DATA_TYPE_STR, $googleId]];
+        $result = self::get($sql, $params);
+        return !empty($result) ? $result[0] : null;
+    }
+
     public function getAuthProvider(): string
     {
         return $this->auth_provider;

@@ -11,6 +11,10 @@ define('TEMPLATE_PATH', APP_PATH  . 'template' . DS);
 define('CSS', '/css/');
 define('JS', '/js/');
 
+
+define('DEBUG_MODE', true); // Set to false in production
+define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
+
 defined('DATABASE_HOST_NAME')   ? null : define('DATABASE_HOST_NAME', 'localhost');
 defined('DATABASE_USER_NAME')   ? null : define('DATABASE_USER_NAME', 'hammad');
 // defined('DATABASE_USER_NAME')   ? null : define('DATABASE_USER_NAME', 'Mohamed');
