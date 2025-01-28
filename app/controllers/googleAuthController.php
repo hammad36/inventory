@@ -29,9 +29,9 @@ class googleAuthController extends abstractController
         $dotenv->load();
 
         $this->client = new Client();
-        $this->client->setClientId($_ENV['209547913831-062a4dotgc15b6ghmcu31emmrs11g64k.apps.googleusercontent.com']);
-        $this->client->setClientSecret($_ENV['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']);
-        $this->client->setRedirectUri($_ENV['https://invenhammad.ddns.net/google-auth/callback']);
+        $this->client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
+        $this->client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);
+        $this->client->setRedirectUri($_ENV['GOOGLE_REDIRECT_URI']);
         $this->client->addScope(['email', 'profile']);
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent');
@@ -40,7 +40,7 @@ class googleAuthController extends abstractController
 
     private function validateGoogleCredentials(): void
     {
-        if (empty($_ENV['209547913831-062a4dotgc15b6ghmcu31emmrs11g64k.apps.googleusercontent.com']) || empty($_ENV['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'])) {
+        if (empty($_ENV['GOOGLE_CLIENT_ID']) || empty($_ENV['GOOGLE_CLIENT_SECRET'])) {
             throw new Exception('Google authentication credentials are not configured properly');
         }
     }
@@ -76,7 +76,8 @@ class googleAuthController extends abstractController
             $user = $this->findOrCreateUser($googleUser);
             $this->updateUserSession($user);
 
-            $this->alertHandler->redirectOnly('/dashboard');
+            // Redirect to /home after successful login
+            $this->alertHandler->redirectOnly('/home');
         } catch (Exception $e) {
             error_log('Google Auth Error: ' . $e->getMessage());
             $this->alertHandler->redirectWithAlert('/login', 'error', $e->getMessage());

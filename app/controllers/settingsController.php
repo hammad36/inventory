@@ -242,12 +242,6 @@ class settingsController extends abstractController
                 session_start();
             }
 
-            // Check if the user is logged in
-            if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
-                $this->redirectWithAlert('error', '/login', 'Please login to access privacy settings.');
-                exit;
-            }
-
             // Handle account deletion request
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_account'])) {
                 // Fetch user data

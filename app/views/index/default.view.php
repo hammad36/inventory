@@ -35,7 +35,9 @@
                     data-context="signin"
                     data-ux_mode="redirect"
                     data-login_uri="/google-auth/callback"
-                    data-auto_prompt="false">
+                    data-auto_prompt="false"
+                    data-callback="handleGoogleSignIn">
+
                 </div>
 
                 <div class="g_id_signin"
@@ -117,109 +119,105 @@
             </form>
         </div>
     </div>
+</section>
+<!-- Google Sign-In Script -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Client-side Form Validation and Password Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
 
-    <!-- Google Sign-In Script -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+        // Email validation
+        emailInput.addEventListener('input', function() {
+            const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+            if (!emailPattern.test(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                emailInput.classList.add('border-red-500');
+            } else {
+                emailError.classList.add('hidden');
+                emailInput.classList.remove('border-red-500');
+            }
+        });
 
-    <!-- Client-side Form Validation and Password Toggle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const emailError = document.getElementById('emailError');
-            const passwordError = document.getElementById('passwordError');
-            const togglePasswordBtn = document.getElementById('togglePassword');
-            const eyeIcon = document.getElementById('eyeIcon');
+        // Password validation
+        passwordInput.addEventListener('input', function() {
+            if (passwordInput.value.length < 8) {
+                passwordError.classList.remove('hidden');
+                passwordInput.classList.add('border-red-500');
+            } else {
+                passwordError.classList.add('hidden');
+                passwordInput.classList.remove('border-red-500');
+            }
+        });
 
-            // Email validation
-            emailInput.addEventListener('input', function() {
-                const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-                if (!emailPattern.test(emailInput.value)) {
-                    emailError.classList.remove('hidden');
-                    emailInput.classList.add('border-red-500');
-                } else {
-                    emailError.classList.add('hidden');
-                    emailInput.classList.remove('border-red-500');
-                }
-            });
-
-            // Password validation
-            passwordInput.addEventListener('input', function() {
-                if (passwordInput.value.length < 8) {
-                    passwordError.classList.remove('hidden');
-                    passwordInput.classList.add('border-red-500');
-                } else {
-                    passwordError.classList.add('hidden');
-                    passwordInput.classList.remove('border-red-500');
-                }
-            });
-
-            // Password visibility toggle
-            togglePasswordBtn.addEventListener('click', function() {
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    eyeIcon.innerHTML = `
+        // Password visibility toggle
+        togglePasswordBtn.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M11 14l-1-1m2 2l1 1m-2-2v3m-4.242-4.242a3 3 0 114.242-4.242"></path>
                 `;
-                } else {
-                    passwordInput.type = 'password';
-                    eyeIcon.innerHTML = `
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                 `;
-                }
-            });
-
-            // Form submission validation
-            form.addEventListener('submit', function(event) {
-                let isValid = true;
-
-                // Email validation
-                const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-                if (!emailPattern.test(emailInput.value)) {
-                    emailError.classList.remove('hidden');
-                    emailInput.classList.add('border-red-500');
-                    isValid = false;
-                }
-
-                // Password validation
-                if (passwordInput.value.length < 8) {
-                    passwordError.classList.remove('hidden');
-                    passwordInput.classList.add('border-red-500');
-                    isValid = false;
-                }
-
-                if (!isValid) {
-                    event.preventDefault();
-                }
-            });
+            }
         });
 
-        function handleGoogleSignIn(response) {
-            if (response.credential) {
-                // Send ID token to backend
-                fetch('/google-auth/callback', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '<?= $csrfToken ?>'
-                        },
-                        body: JSON.stringify({
-                            credential: response.credential,
-                            g_csrf_token: document.cookie.replace(/(?:(?:^|.*;\s*)g_csrf_token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
-                        })
-                    })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Google Sign-In failed. Please try again.');
-                    });
+        // Form submission validation
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Email validation
+            const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+            if (!emailPattern.test(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                emailInput.classList.add('border-red-500');
+                isValid = false;
             }
+
+            // Password validation
+            if (passwordInput.value.length < 8) {
+                passwordError.classList.remove('hidden');
+                passwordInput.classList.add('border-red-500');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    function handleGoogleSignIn(response) {
+        if (response.credential) {
+            // Send ID token to backend
+            fetch('/google-auth/callback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        credential: response.credential
+                    })
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Google Sign-In failed. Please try again.');
+                });
         }
-    </script>
-</section>
+    }
+</script>

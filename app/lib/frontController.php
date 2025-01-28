@@ -22,10 +22,10 @@ class frontController
     {
         $url = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'), 3);
         if (isset($url[0]) && $url[0] != '') {
-            $this->_controller = str_replace('-', '', ucwords($url[0], '-'));
+            $this->_controller = $url[0];
         }
         if (isset($url[1]) && $url[1] != '') {
-            $this->_action = lcfirst(str_replace('-', '', ucwords($url[1], '-')));
+            $this->_action = $url[1];
         }
         if (isset($url[2]) && $url[2] != '') {
             $explodedParams = explode('/', $url[2]);
